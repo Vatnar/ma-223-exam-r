@@ -2,6 +2,7 @@ library("rjson")
 library(jsonlite)
 library(here)
 
+readRenviron(here(".env"))
 
 ROOT <- Sys.getenv("REPO_ROOT")
 OUTPUT <- Sys.getenv("OUTPUT")
