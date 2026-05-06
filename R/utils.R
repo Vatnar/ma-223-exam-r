@@ -1,17 +1,8 @@
 # MA223 Exam R Package
 # Utility Functions
 
-#' Get repository root from .env file
-#' @return Character string with repo root path
 get_repo_root <- function() {
-  env_path <- file.path(getwd(), ".env")
-  if (!file.exists(env_path)) {
-    stop(".env file not found")
-  }
-
-  lines <- readLines(env_path, warn = FALSE)
-  line <- grep("REPO_ROOT", lines, value = TRUE)
-  gsub('REPO_ROOT=|"', '', line)
+  "."
 }
 
 #' Get output directory
@@ -22,9 +13,10 @@ get_output_dir <- function() {
 
 #' List available experiments
 #' @param base_path Base path to experiments directory
+#' @param group Group name
 #' @return Character vector of experiment IDs
-list_experiments <- function(base_path = get_repo_root()) {
-  exp_path <- file.path(base_path, "results/experiments/ActivationComparison")
+list_experiments <- function(base_path = get_repo_root(), group = "ActivationComparison") {
+  exp_path <- file.path(base_path, "results/experiments", group)
 
   if (!dir.exists(exp_path)) {
     stop("Experiments directory not found: ", exp_path)

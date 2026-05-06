@@ -1,0 +1,7 @@
+{
+  "id": "exp_023",
+  "max_epochs": 25,
+  "dropout": 0.2,
+  "learning_rate": 0.0022,
+  "activation": "silu"
+}

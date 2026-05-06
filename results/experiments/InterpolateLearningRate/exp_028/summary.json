@@ -1,0 +1,16 @@
+{
+  "experiment_id": "exp_028",
+  "hyperparameters": {
+    "activation": "gelu",
+    "dropout": 0.2,
+    "learning_rate": 1.5e-05,
+    "max_epochs": 25
+  },
+  "metrics": {
+    "test": {
+      "accuracy": 0.416887,
+      "num_samples": 758,
+      "num_correct": 316
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "experiment_id": "exp_003",
+  "hyperparameters": {
+    "activation": "silu",
+    "dropout": 0.20000000298023224,
+    "learning_rate": 0.009999999776482582,
+    "max_epochs": 25
+  },
+  "metrics": {
+    "test": {
+      "accuracy": 0.09366754442453384,
+      "num_correct": 71,
+      "num_samples": 758
+    },
+    "train": {
+      "final_accuracy": 0.6875,
+      "final_loss": 0.02968558855354786
+    },
+    "valid": {
+      "best_accuracy": 0.7636364102363586,
+      "best_loss": 0.029909247532486916,
+      "epoch": 25
+    }
+  },
+  "training": {
+    "best_epoch": 25,
+    "early_stopped": false,
+    "runtime_seconds": 60.723182619,
+    "total_epochs": 25
+  }
+}

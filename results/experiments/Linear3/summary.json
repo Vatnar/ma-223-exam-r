@@ -1,0 +1,61 @@
+{
+  "experiment_name": "Linear3",
+  "total_experiments": 81,
+  "date_created": "2026-05-05T13:14:07.528721934+00:00",
+  "experiments": [
+    {
+      "id": "exp_001",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.875,
+          "loss": 0.968034
+        },
+        "valid": {
+          "accuracy": 0.98181814,
+          "loss": 0.039642144,
+          "epoch": 4
+        },
+        "test": {
+          "accuracy": 0.46174142,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_002",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.022700686
+        },
+        "valid": {
+          "accuracy": 0.6545454,
+          "loss": 0.038753092,
+          "epoch": 3
+        },
+        "test": {
+          "accuracy": 0.14775726,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "linear",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 25
+      }
+    }
+  ],
+  "best_experiment": {
+    "id": "exp_001",
+    "test_accuracy": 0.46174142
+  }
+}

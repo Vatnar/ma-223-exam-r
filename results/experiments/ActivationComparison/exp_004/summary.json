@@ -1,0 +1,31 @@
+{
+  "experiment_id": "exp_004",
+  "hyperparameters": {
+    "activation": "tanh",
+    "dropout": 0.20000000298023224,
+    "learning_rate": 0.009999999776482582,
+    "max_epochs": 25
+  },
+  "metrics": {
+    "test": {
+      "accuracy": 0.059366755187511444,
+      "num_correct": 45,
+      "num_samples": 758
+    },
+    "train": {
+      "final_accuracy": 0.6315789222717285,
+      "final_loss": 0.052521295845508575
+    },
+    "valid": {
+      "best_accuracy": 0.6909091472625732,
+      "best_loss": 0.05522557348012924,
+      "epoch": 24
+    }
+  },
+  "training": {
+    "best_epoch": 24,
+    "early_stopped": false,
+    "runtime_seconds": 59.478176796,
+    "total_epochs": 25
+  }
+}

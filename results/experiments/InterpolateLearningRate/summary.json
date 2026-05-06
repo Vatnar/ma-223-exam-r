@@ -1,0 +1,761 @@
+{
+  "experiment_name": "InterpolateLearningRate",
+  "total_experiments": 81,
+  "date_created": "2026-04-30T18:58:06.517611195+00:00",
+  "experiments": [
+    {
+      "id": "exp_001",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.640625,
+          "loss": 0.055139728
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.048383065,
+          "epoch": 23
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.5,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_002",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6875,
+          "loss": 0.044399947
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.041519918,
+          "epoch": 20
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.33000001311302185,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_003",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6875,
+          "loss": 0.042349845
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.04125124,
+          "epoch": 12
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.2199999988079071,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_004",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6875,
+          "loss": 0.04220561
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.04091423,
+          "epoch": 12
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.15000000596046448,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_005",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6875,
+          "loss": 0.042000905
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.040848855,
+          "epoch": 1
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.10000000149011612,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_006",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6875,
+          "loss": 0.04379196
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.04230123,
+          "epoch": 24
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.06800000369548798,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_007",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6875,
+          "loss": 0.04169967
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.040788177,
+          "epoch": 2
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.04600000008940697,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_008",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.71875,
+          "loss": 0.038465958
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.039369587,
+          "epoch": 24
+        },
+        "test": {
+          "accuracy": 0.20184697,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.03200000151991844,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_009",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6875,
+          "loss": 0.041698035
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.04078385,
+          "epoch": 4
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.02199999988079071,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_010",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6875,
+          "loss": 0.041689128
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.039550867,
+          "epoch": 1
+        },
+        "test": {
+          "accuracy": 0.13720317,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.014999999664723871,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_011",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.8125,
+          "loss": 0.9921114
+        },
+        "valid": {
+          "accuracy": 0.515625,
+          "loss": 0.039756097,
+          "epoch": 1
+        },
+        "test": {
+          "accuracy": 0.25725594,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.009999999776482582,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_012",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.8125,
+          "loss": 0.9797829
+        },
+        "valid": {
+          "accuracy": 0.71875,
+          "loss": 0.03484907,
+          "epoch": 3
+        },
+        "test": {
+          "accuracy": 0.32453826,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.006800000090152025,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_013",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.4274454
+        },
+        "valid": {
+          "accuracy": 0.6875,
+          "loss": 0.038004853,
+          "epoch": 3
+        },
+        "test": {
+          "accuracy": 0.36675462,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.004600000102072954,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_014",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.2486694
+        },
+        "valid": {
+          "accuracy": 0.875,
+          "loss": 0.03658155,
+          "epoch": 3
+        },
+        "test": {
+          "accuracy": 0.46833774,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.0031999999191612005,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_015",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.3067745
+        },
+        "valid": {
+          "accuracy": 0.54545456,
+          "loss": 0.035579585,
+          "epoch": 3
+        },
+        "test": {
+          "accuracy": 0.4656992,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.002199999988079071,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_016",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.01371055
+        },
+        "valid": {
+          "accuracy": 0.734375,
+          "loss": 0.035541564,
+          "epoch": 3
+        },
+        "test": {
+          "accuracy": 0.5580475,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.001500000013038516,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_017",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.024716891
+        },
+        "valid": {
+          "accuracy": 0.6875,
+          "loss": 0.03442101,
+          "epoch": 4
+        },
+        "test": {
+          "accuracy": 0.52506596,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_018",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.082619675
+        },
+        "valid": {
+          "accuracy": 0.75,
+          "loss": 0.033255555,
+          "epoch": 3
+        },
+        "test": {
+          "accuracy": 0.49208444,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.0006799999973736703,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_019",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.066304065
+        },
+        "valid": {
+          "accuracy": 0.71875,
+          "loss": 0.036000937,
+          "epoch": 3
+        },
+        "test": {
+          "accuracy": 0.56992084,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.0004600000102072954,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_020",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.16262174
+        },
+        "valid": {
+          "accuracy": 0.671875,
+          "loss": 0.032014664,
+          "epoch": 11
+        },
+        "test": {
+          "accuracy": 0.5329815,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.00031999999191612005,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_021",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.13758622
+        },
+        "valid": {
+          "accuracy": 0.671875,
+          "loss": 0.03224679,
+          "epoch": 6
+        },
+        "test": {
+          "accuracy": 0.5,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.00022000000171829015,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_022",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.08998053
+        },
+        "valid": {
+          "accuracy": 0.84375,
+          "loss": 0.033187255,
+          "epoch": 6
+        },
+        "test": {
+          "accuracy": 0.46306068,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.0001500000071246177,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_023",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.52326185
+        },
+        "valid": {
+          "accuracy": 0.703125,
+          "loss": 0.0316569,
+          "epoch": 17
+        },
+        "test": {
+          "accuracy": 0.44854882,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.00009999999747378752,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_024",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.21065122
+        },
+        "valid": {
+          "accuracy": 0.65625,
+          "loss": 0.03323717,
+          "epoch": 10
+        },
+        "test": {
+          "accuracy": 0.48680738,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.00006800000119255856,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_025",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.7547813
+        },
+        "valid": {
+          "accuracy": 0.703125,
+          "loss": 0.033442333,
+          "epoch": 6
+        },
+        "test": {
+          "accuracy": 0.4182058,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.00004600000102072954,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_026",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.82451326
+        },
+        "valid": {
+          "accuracy": 0.796875,
+          "loss": 0.03315966,
+          "epoch": 10
+        },
+        "test": {
+          "accuracy": 0.4459103,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.00003199999991920777,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_027",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.953125,
+          "loss": 0.99220335
+        },
+        "valid": {
+          "accuracy": 0.734375,
+          "loss": 0.033031024,
+          "epoch": 24
+        },
+        "test": {
+          "accuracy": 0.42084432,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.000022000000171829015,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_028",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.921875,
+          "loss": 0.96928585
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.03326789,
+          "epoch": 21
+        },
+        "test": {
+          "accuracy": 0.41688654,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 0.000014999999621068127,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_029",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.828125,
+          "loss": 0.023985239
+        },
+        "valid": {
+          "accuracy": 0.84375,
+          "loss": 0.034313973,
+          "epoch": 22
+        },
+        "test": {
+          "accuracy": 0.37598944,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 9.999999747378752e-6,
+        "max_epochs": 25
+      }
+    },
+    {
+      "id": "exp_030",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.78125,
+          "loss": 0.02813425
+        },
+        "valid": {
+          "accuracy": 0.828125,
+          "loss": 0.03445313,
+          "epoch": 23
+        },
+        "test": {
+          "accuracy": 0.33905014,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.20000000298023224,
+        "learning_rate": 6.799999937356915e-6,
+        "max_epochs": 25
+      }
+    }
+  ],
+  "best_experiment": {
+    "id": "exp_019",
+    "test_accuracy": 0.56992084
+  }
+}

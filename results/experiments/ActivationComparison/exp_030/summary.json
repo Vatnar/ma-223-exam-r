@@ -1,0 +1,31 @@
+{
+  "experiment_id": "exp_030",
+  "hyperparameters": {
+    "activation": "sigmoid",
+    "dropout": 0.20000000298023224,
+    "learning_rate": 0.001500000013038516,
+    "max_epochs": 25
+  },
+  "metrics": {
+    "test": {
+      "accuracy": 0.1372031718492508,
+      "num_correct": 104,
+      "num_samples": 758
+    },
+    "train": {
+      "final_accuracy": 0.6315789222717285,
+      "final_loss": 0.04274393990635872
+    },
+    "valid": {
+      "best_accuracy": 1.0,
+      "best_loss": 0.041351113468408585,
+      "epoch": 13
+    }
+  },
+  "training": {
+    "best_epoch": 13,
+    "early_stopped": false,
+    "runtime_seconds": 62.261043346,
+    "total_epochs": 25
+  }
+}

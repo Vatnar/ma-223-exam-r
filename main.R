@@ -53,19 +53,44 @@ message("=== MA223 Exam R Package Demo ===\n")
 root <- get_repo_root()
 message("Root: ", root, "\n")
 
-# List available experiments
-all_exps <- list_experiments(root)
-message("Available experiments: ", length(all_exps), "\n")
+# List available experiment groups
+groups <- list_experiment_groups(root)
+message("Available experiment groups: ", paste(groups, collapse = ", "), "\n")
 
-# Load example experiments
-exp_ids <- valid_experiments(root)
-message("\nLoading all: ", length(exp_ids), "experiments\n")
-exps <- load_experiments(exp_ids)
+# Load all experiments from ActivationComparison (default)
+exp_ids <- valid_experiments(root, "ActivationComparison")
+message("\nLoading: ", length(exp_ids), "experiments from ActivationComparison\n")
+
+
+
 
 # --- 1. SUMMARY TABLE ---
-message("\n--- 1. Experiment Summary ---\n")
-summary_df <- summarize_experiments(exps)
-print(summary_df[, c("exp_id", "activation", "accuracy_test", "accuracy_valid", "runtime_seconds")])
+#message("\n--- 1. Experiment Summary ---\n")
+#summary_df <- summarize_experiments(exps)
+#print(summary_df[, c("exp_id", "activation", "accuracy_test", "accuracy_valid", "runtime_seconds")])
+
+
+# --- Symmetrisk eksakt kredibilitetsestimat. 
+message("\n--- Symmetrisk eksakt kredibilitetsestimat")
+exps <- load_experiments(exp_ids, root, "ActivationComparison")
+exp <- exps[['exp_027']]
+n <- length(exp$test_results$correct)
+k <- sum(exp$test_results$correct)
+
+alpha = 0.9
+a0 = 0.5
+b0 = 0.5
+
+a1 = a0 + k # suksesser
+b1 = b0 + (n-k) #feil
+iCDF <- function(x) {
+  stopifnot(x >= 0)
+  stopifnot(x <= 1)
+  qbeta(x,a1,b1)
+}
+I = c(iCDF(alpha),iCDF(1-alpha))
+I
+
 
 # --- 2. ACCURACY WITH CI ---
 message("\n--- 2. Test Accuracy with 95% CI (Wilson) ---\n")

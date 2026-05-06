@@ -1,0 +1,31 @@
+{
+  "experiment_id": "exp_011",
+  "hyperparameters": {
+    "activation": "relu",
+    "dropout": 0.20000000298023224,
+    "learning_rate": 0.004600000102072954,
+    "max_epochs": 25
+  },
+  "metrics": {
+    "test": {
+      "accuracy": 0.1372031718492508,
+      "num_correct": 104,
+      "num_samples": 758
+    },
+    "train": {
+      "final_accuracy": 0.6315789222717285,
+      "final_loss": 0.04107621684670448
+    },
+    "valid": {
+      "best_accuracy": 1.0,
+      "best_loss": 0.03986083343625069,
+      "epoch": 1
+    }
+  },
+  "training": {
+    "best_epoch": 1,
+    "early_stopped": false,
+    "runtime_seconds": 59.46665898,
+    "total_epochs": 25
+  }
+}

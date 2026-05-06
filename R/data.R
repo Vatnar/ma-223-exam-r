@@ -1,12 +1,46 @@
 # MA223 Exam R Package
 # Data Loading Functions
 
+#' Get experiments from a specific group
+#' @param group_name Group name (e.g., "InterpolateLearningRate", "Linear3", "ActivationComparison")
+#' @param base_path Base path to experiments (default from get_repo_root)
+#' @return Named list of experiment objects from that group
+get_experiments_by_group <- function(group_name, base_path = get_repo_root()) {
+  group_path <- file.path(base_path, "results/experiments", group_name)
+
+  if (!dir.exists(group_path)) {
+    stop("Experiment group not found: ", group_path)
+  }
+
+  exp_dirs <- list.dirs(group_path, full.names = FALSE, recursive = FALSE)
+  exp_ids <- exp_dirs[grepl("^exp_", exp_dirs)]
+
+  load_experiments(exp_ids, base_path)
+}
+
+#' List available experiment groups
+#' @param base_path Base path to experiments
+#' @return Character vector of group names
+list_experiment_groups <- function(base_path = get_repo_root()) {
+  exp_base <- file.path(base_path, "results/experiments")
+  list.dirs(exp_base, full.names = FALSE, recursive = FALSE)
+}
+
+#' Filter experiments by activation function
+#' @param exps Named list of experiment objects
+#' @param activation Activation name (e.g., "sigmoid", "silu", "relu", "gelu", "tanh")
+#' @return Filtered list of experiments
+filter_by_activation <- function(exps, activation) {
+  exps[sapply(exps, function(e) e$config$activation == activation)]
+}
+
 #' Load single experiment results
 #' @param exp_id Experiment ID (e.g., "exp_050")
 #' @param base_path Base path to experiments (default from get_repo_root)
+#' @param group Group name (e.g., "InterpolateLearningRate", "Linear3", "ActivationComparison")
 #' @return List with all experiment data
-load_experiment <- function(exp_id, base_path = get_repo_root()) {
-  exp_path <- file.path(base_path, "results/experiments/ActivationComparison", exp_id)
+load_experiment <- function(exp_id, base_path = get_repo_root(), group = "ActivationComparison") {
+  exp_path <- file.path(base_path, "results/experiments", group, exp_id)
 
   if (!dir.exists(exp_path)) {
     stop("Experiment not found: ", exp_path)
@@ -34,11 +68,12 @@ load_experiment <- function(exp_id, base_path = get_repo_root()) {
 #' Load multiple experiments
 #' @param exp_ids Character vector of experiment IDs
 #' @param base_path Base path to experiments
+#' @param group Group name
 #' @return Named list of experiment objects
-load_experiments <- function(exp_ids, base_path = get_repo_root()) {
+load_experiments <- function(exp_ids, base_path = get_repo_root(), group = "ActivationComparison") {
   exps <- lapply(exp_ids, function(exp_id) {
     tryCatch(
-      load_experiment(exp_id, base_path),
+      load_experiment(exp_id, base_path, group),
       error = function(e) {
         warning("Failed to load ", exp_id, ": ", e$message)
         NULL
@@ -50,22 +85,24 @@ load_experiments <- function(exp_ids, base_path = get_repo_root()) {
   exps[!sapply(exps, is.null)]
 }
 
-#' Load all available experiments
+#' Load all available experiments from a group
 #' @param base_path Base path to experiments
+#' @param group Group name
 #' @return Named list of all experiment objects
-load_all_experiments <- function(base_path = get_repo_root()) {
-  exp_ids <- list_experiments(base_path)
-  load_experiments(exp_ids, base_path)
+load_all_experiments <- function(base_path = get_repo_root(), group = "ActivationComparison") {
+  exp_ids <- list_experiments(base_path, group)
+  load_experiments(exp_ids, base_path, group)
 }
 
 #' Get experiment IDs that have complete data
 #' @param base_path Base path to experiments
+#' @param group Group name
 #' @return Character vector of valid experiment IDs
-valid_experiments <- function(base_path = get_repo_root()) {
-  exp_ids <- list_experiments(base_path)
+valid_experiments <- function(base_path = get_repo_root(), group = "ActivationComparison") {
+  exp_ids <- list_experiments(base_path, group)
 
   sapply(exp_ids, function(exp_id) {
-    exp_path <- file.path(base_path, "results/experiments/ActivationComparison", exp_id)
+    exp_path <- file.path(base_path, "results/experiments", group, exp_id)
     all(sapply(c("config.json", "summary.json", "history_train.csv", "history_valid.csv",
                 "test_results.csv", "confusion_matrix.csv"),
               function(f) file.exists(file.path(exp_path, f))))

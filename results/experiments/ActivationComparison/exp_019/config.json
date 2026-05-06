@@ -1,0 +1,7 @@
+{
+  "id": "exp_019",
+  "max_epochs": 25,
+  "dropout": 0.2,
+  "learning_rate": 0.0032,
+  "activation": "tanh"
+}
