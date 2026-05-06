@@ -70,26 +70,35 @@ message("\nLoading: ", length(exp_ids), "experiments from ActivationComparison\n
 #print(summary_df[, c("exp_id", "activation", "accuracy_test", "accuracy_valid", "runtime_seconds")])
 
 
-# --- Symmetrisk eksakt kredibilitetsestimat. 
-message("\n--- Symmetrisk eksakt kredibilitetsestimat")
-exps <- load_experiments(exp_ids, root, "ActivationComparison")
-exp <- exps[['exp_027']]
-n <- length(exp$test_results$correct)
-k <- sum(exp$test_results$correct)
+message("\n--- Credibility intervall")
+ActivationComparisonExps <- load_experiments(exp_ids, root, "ActivationComparison")
 
-alpha = 0.9
-a0 = 0.5
-b0 = 0.5
+exps <- c('exp_027','exp_028','exp_030')
 
-a1 = a0 + k # suksesser
-b1 = b0 + (n-k) #feil
-iCDF <- function(x) {
-  stopifnot(x >= 0)
-  stopifnot(x <= 1)
-  qbeta(x,a1,b1)
+for (nm in exps){
+  exp <- ActivationComparisonExps[[nm]]
+  
+  n <- length(exp$test_results$correct)
+  k <- sum(exp$test_results$correct)
+  
+  alpha = 0.9
+  a0 = 0.5
+  b0 = 0.5
+  
+  a1 = a0 + k # suksesser
+  b1 = b0 + (n-k) #feil
+  iCDF <- function(x) {
+    stopifnot(x >= 0)
+    stopifnot(x <= 1)
+    qbeta(x,a1,b1)
+  }
+  I = c(iCDF(1-alpha/2),iCDF(alpha/2))
+  cat(sprintf("%s: I = [%f, %f], \t accuracy: %f\n",nm, I[1], I[2], exp$summary$metrics$test$accuracy))
 }
-I = c(iCDF(alpha),iCDF(1-alpha))
-I
+
+message("\n--- Confidence intervall")
+
+stop("stopping")
 
 
 # --- 2. ACCURACY WITH CI ---
