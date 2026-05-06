@@ -96,15 +96,9 @@ for (nm in exps){
   cat(sprintf("%s: I = [%f, %f], \t accuracy: %f\n",nm, I[1], I[2], exp$summary$metrics$test$accuracy))
 }
 
-message("\n--- Confidence intervall")
-
-stop("stopping")
-
-
-# --- 2. ACCURACY WITH CI ---
-message("\n--- 2. Test Accuracy with 95% CI (Wilson) ---\n")
-for (nm in names(exps)) {
-  exp <- exps[[nm]]
+message("\n---  Test Accuracy withConfidence interval wilson ---")
+for (nm in exps) {
+  exp <- ActivationComparisonExps[[nm]]
   metrics <- exp$summary$metrics
   n_correct <- metrics$test$num_correct
   n_total <- metrics$test$num_samples
@@ -113,6 +107,11 @@ for (nm in names(exps)) {
   cat(sprintf("  %s: %.1f%% [%0.1f%%, %0.1f%%]\n",
              nm, ci$estimate * 100, ci$lower * 100, ci$upper * 100))
 }
+
+stop()
+
+
+
 
 # --- 3. COMPARE EXPERIMENTS ---
 message("\n--- 3. Pairwise Comparison ---\n")

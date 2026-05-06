@@ -59,7 +59,7 @@ accuracy_ci_wilson <- function(x, n, conf = 0.95) {
   if (n == 0) {
     return(list(estimate = NA, lower = NA, upper = NA))
   }
-
+  # TODO: sjekke at dette er riktig etter formlers
   p_hat <- x / n
 
   if (p_hat == 0) {
