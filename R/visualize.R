@@ -237,7 +237,7 @@ plot_binom_surface <- function(n = 758, p_val = 0.5, file = NULL,
 
 plot_hyperparam_vs_metric <- function(exps, param = "learning_rate",
                                   metric = "accuracy_test",
-                                  file = NULL, width = 6, height = 4) {
+                                  file = NULL, width = 6, height = 4, draw_labels=TRUE) {
   if (is.null(exps) || length(exps) == 0) {
     warning("No experiments to plot")
     return(NULL)
@@ -269,9 +269,11 @@ plot_hyperparam_vs_metric <- function(exps, param = "learning_rate",
     lines(x_vals[x_order], fitted(loess_fit)[x_order],
           col = "red", lty = 2)
   }
-
-  text(x_vals, y_vals, labels = summary_df$exp_id,
-       pos = 3, cex = 0.6, offset = 0.5)
+  
+  if (draw_labels) {
+    text(x_vals, y_vals, labels = summary_df$exp_id,
+         pos = 3, cex = 0.6, offset = 0.5)
+  }
 
   if (!is.null(file)) {
     dev.off()

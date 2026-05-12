@@ -122,35 +122,54 @@ for (nm in exps) {
   )
 }
 
-stop("Stopping early")
+# stop("Stopping early")
 
 
 
 
-# --- 3. COMPARE EXPERIMENTS ---
-message("\n--- 3. Pairwise Comparison ---\n")
-pairwise <- pairwise_comparison(exps)
-if (!is.null(pairwise)) {
-  print(pairwise[, c("exp1", "exp2", "diff", "p_value_mcnemar")])
-}
 
-# --- 4. STATS BY GROUP ---
-message("\n--- 4. Stats by Activation Function ---\n")
-grouped <- group_by_activation(exps)
-grouped_df <- stats_by_group(grouped)
-print(grouped_df)
 
 # --- 5. PLOTS ---
 message("\n--- 5. Creating Plots ---\n")
 
-plot_training_curves(exps$exp_048, file = file.path(output_dir, "demo_training_curves.pdf"))
-message("  Created: output/demo_training_curves.pdf\n")
+ExpGroups = c("ActivationComparison", "InterpolateLearningRate", "Linear3",
+              "LinearRepetition", "LinearRepetitionManyEpoch")
 
-plot_accuracy_comparison(exps, file = file.path(output_dir, "demo_accuracy_comparison.pdf"))
-message("  Created: output/demo_accuracy_comparison.pdf\n")
+Experiments <- sapply(ExpGroups, function(group) load_all_experiments(group = group))
+# Experiments <- unlist(Experiments, recursive = FALSE)
 
-plot_validation_curves(exps, file = file.path(output_dir, "demo_validation_curves.pdf"))
-message("  Created: output/demo_validation_curves.pdf\n")
+
+ExpGroup = "ActivationComparison"
+ExpId = "exp_002"
+exp <- Experiments[[ExpGroup]][[ExpId]]
+path <- file.path(output_dir, sprintf("%s-%s-matrix.pdf", ExpGroup, ExpId))
+
+plot_confusion_matrix(
+  exp$confusion_matrix,
+  file = path,
+  max_classes = 50
+)
+
+path <- file.path(output_dir, sprintf("%s-%s-reliability.pdf", ExpGroup, ExpId))
+plot_reliability_diagram(exp$test_results, file = path)
+
+plot_hyperparam_vs_metric(
+  unlist(Experiments, recursive = FALSE),
+  "learning_rate",
+  "accuracy_test",
+  file = file.path(output_dir, "all_acc_vs_rel.pdf"),
+  draw_labels = FALSE
+)
+
+
+# Experiment Name
+# 27 
+
+
+
+
+
+stop()
 
 # === FORPROSJEKT SPECIFIC PLOTS ===
 
@@ -160,6 +179,8 @@ message("\n--- 5b. Forprosjekt Visualizations ---\n")
 plot_binom_surface(n = 758,
                    file = file.path(output_dir, "binom_surface.pdf"))
 message("  Created: output/binom_surface.pdf (binomial surface)\n")
+
+stop()
 
 # Confusion matrix for best model
 cm_exp <- exps$exp_048$confusion_matrix
