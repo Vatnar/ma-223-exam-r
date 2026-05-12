@@ -110,14 +110,14 @@ for (nm in exps) {
   n_correct <- metrics$test$num_correct
   n_total <- metrics$test$num_samples
   
-  ci <- wilson_ci(n_correct, n_total, 0.95)
+  ci <- prop.test(n_correct, n_total, conf.level=0.95)
   cat(
     sprintf(
       "  %-10s %10.4f [%9.4f, %9.4f]\n",
       nm,
       ci$estimate,
-      ci$lower,
-      ci$upper
+      ci$conf.int[1],
+      ci$conf.[2]
     )
   )
 }

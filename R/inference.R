@@ -1,46 +1,6 @@
 # MA223 Exam R Package
 # Inference Functions
 
-#' Wilson Score Interval
-#' @param x Number of successes
-#' @param n Total trials
-#' @param conf Confidence level
-#' @return List(estimate, lower, upper)
-wilson_ci <- function(x, n, conf = 0.95) {
-  if (n == 0) {
-    return(list(
-      estimate = NA,
-      lower = NA,
-      upper = NA
-    ))
-  }
-
-  p_hat <- x / n
-
-  if (p_hat == 0) {
-    p_hat <- 1 / n
-  }
-  if (p_hat == 1) {
-    p_hat <- 1 - 1 / n
-  }
-
-  z <- qnorm(1 - (1 - conf) / 2)
-
-  p_tilde <- (p_hat + z^2 / 2) / (1 + z^2 / n)
-
-  center <- p_hat + z^2 / (2 * n)
-  spread <- z * sqrt(p_hat * (1 - p_hat) / n + z^2 / (4 * n^2))
-  denom <- 1 + z^2 / n
-
-  estimate <- center / denom
-  lower <- (center - spread) / denom
-  upper <- (center + spread) / denom
-
-  list(estimate = estimate,
-       lower = lower,
-       upper = upper)
-}
-
 #' Symmetric Credibility Interval (Beta Posterior)
 #' @param x Number of successes
 #' @param n Total trials
