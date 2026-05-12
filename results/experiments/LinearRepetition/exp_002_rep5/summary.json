@@ -1,0 +1,31 @@
+{
+  "experiment_id": "exp_002_rep5",
+  "hyperparameters": {
+    "activation": "linear",
+    "dropout": 0.30000001192092896,
+    "learning_rate": 0.0010000000474974513,
+    "max_epochs": 35
+  },
+  "metrics": {
+    "test": {
+      "accuracy": 0.33245381712913513,
+      "num_correct": 252,
+      "num_samples": 758
+    },
+    "train": {
+      "final_accuracy": 1.0,
+      "final_loss": 0.12005440890789032
+    },
+    "valid": {
+      "best_accuracy": 0.4765625,
+      "best_loss": 0.04121306911110878,
+      "epoch": 2
+    }
+  },
+  "training": {
+    "best_epoch": 2,
+    "early_stopped": false,
+    "runtime_seconds": 87.501768816,
+    "total_epochs": 35
+  }
+}

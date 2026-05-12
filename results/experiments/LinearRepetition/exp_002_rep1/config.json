@@ -1,0 +1,7 @@
+{
+  "id": "exp_002_rep1",
+  "max_epochs": 35,
+  "dropout": 0.3,
+  "learning_rate": 0.001,
+  "activation": "linear"
+}

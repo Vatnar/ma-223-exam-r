@@ -1,0 +1,7 @@
+{
+  "id": "exp_001_rep5",
+  "max_epochs": 100,
+  "dropout": 0.3,
+  "learning_rate": 0.001,
+  "activation": "gelu"
+}

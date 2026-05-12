@@ -1,0 +1,261 @@
+{
+  "experiment_name": "LinearRepetitionManyEpoch",
+  "total_experiments": 81,
+  "date_created": "2026-05-12T12:33:27.709554198+00:00",
+  "experiments": [
+    {
+      "id": "exp_001_rep1",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.6171875,
+          "loss": 0.028788676
+        },
+        "valid": {
+          "accuracy": 0.6953125,
+          "loss": 0.030963402,
+          "epoch": 64
+        },
+        "test": {
+          "accuracy": 0.22823219,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_001_rep2",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.78125,
+          "loss": 0.03459701
+        },
+        "valid": {
+          "accuracy": 0.6875,
+          "loss": 0.035497203,
+          "epoch": 41
+        },
+        "test": {
+          "accuracy": 0.17414248,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_001_rep3",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.7109375,
+          "loss": 0.9734709
+        },
+        "valid": {
+          "accuracy": 0.7578125,
+          "loss": 0.0281858,
+          "epoch": 24
+        },
+        "test": {
+          "accuracy": 0.37335092,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_001_rep4",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.703125,
+          "loss": 0.9361461
+        },
+        "valid": {
+          "accuracy": 0.78125,
+          "loss": 0.02912414,
+          "epoch": 34
+        },
+        "test": {
+          "accuracy": 0.33377308,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_001_rep5",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 0.8203125,
+          "loss": 0.9755433
+        },
+        "valid": {
+          "accuracy": 0.6953125,
+          "loss": 0.027629878,
+          "epoch": 26
+        },
+        "test": {
+          "accuracy": 0.40633246,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "gelu",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_002_rep1",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.10238846
+        },
+        "valid": {
+          "accuracy": 0.546875,
+          "loss": 0.032154232,
+          "epoch": 9
+        },
+        "test": {
+          "accuracy": 0.3707124,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "linear",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_002_rep2",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.04560802
+        },
+        "valid": {
+          "accuracy": 0.671875,
+          "loss": 0.03256493,
+          "epoch": 11
+        },
+        "test": {
+          "accuracy": 0.41556728,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "linear",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_002_rep3",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.06972304
+        },
+        "valid": {
+          "accuracy": 0.625,
+          "loss": 0.032226577,
+          "epoch": 6
+        },
+        "test": {
+          "accuracy": 0.39577836,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "linear",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_002_rep4",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.014369601
+        },
+        "valid": {
+          "accuracy": 0.625,
+          "loss": 0.031658534,
+          "epoch": 10
+        },
+        "test": {
+          "accuracy": 0.43931398,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "linear",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    },
+    {
+      "id": "exp_002_rep5",
+      "status": "completed",
+      "metrics": {
+        "train": {
+          "accuracy": 1.0,
+          "loss": 0.015608093
+        },
+        "valid": {
+          "accuracy": 0.65625,
+          "loss": 0.030423233,
+          "epoch": 8
+        },
+        "test": {
+          "accuracy": 0.4762533,
+          "loss": 0.0
+        }
+      },
+      "hyperparameters": {
+        "activation": "linear",
+        "dropout": 0.30000001192092896,
+        "learning_rate": 0.0010000000474974513,
+        "max_epochs": 100
+      }
+    }
+  ],
+  "best_experiment": {
+    "id": "exp_002_rep5",
+    "test_accuracy": 0.4762533
+  }
+}
