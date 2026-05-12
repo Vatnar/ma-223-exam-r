@@ -3,7 +3,7 @@
 # -----------------------------------------
 # Description: Loads all package functions and runs demo analysis
 
-# === CONFIGURATION === 
+# === CONFIGURATION ===
 # Set theme: TRUE for poster (vivid colors), FALSE for report (clean LaTeX plots)
 USE_POSTER_THEME <- TRUE
 
@@ -15,7 +15,10 @@ if (USE_POSTER_THEME) {
 }
 
 message("=== MA223 Exam R Package ===\n")
-message("Theme: ", if (USE_POSTER_THEME) "poster" else "report", "\n")
+message("Theme: ", if (USE_POSTER_THEME)
+  "poster"
+  else
+    "report", "\n")
 
 # --- LOAD LIBRARIES ---
 library(jsonlite)
@@ -55,11 +58,15 @@ message("Root: ", root, "\n")
 
 # List available experiment groups
 groups <- list_experiment_groups(root)
-message("Available experiment groups: ", paste(groups, collapse = ", "), "\n")
+message("Available experiment groups: ",
+        paste(groups, collapse = ", "),
+        "\n")
 
 # Load all experiments from ActivationComparison (default)
 exp_ids <- valid_experiments(root, "ActivationComparison")
-message("\nLoading: ", length(exp_ids), "experiments from ActivationComparison\n")
+message("\nLoading: ",
+        length(exp_ids),
+        "experiments from ActivationComparison\n")
 
 
 
@@ -70,45 +77,52 @@ message("\nLoading: ", length(exp_ids), "experiments from ActivationComparison\n
 #print(summary_df[, c("exp_id", "activation", "accuracy_test", "accuracy_valid", "runtime_seconds")])
 
 
-message("\n--- Credibility intervall")
+message("\n--- Credibility interval (symmetric Beta posterior) ---")
 ActivationComparisonExps <- load_experiments(exp_ids, root, "ActivationComparison")
 
-exps <- c('exp_027','exp_028','exp_030')
+exps <- c('exp_027', 'exp_028', 'exp_030')
 
-for (nm in exps){
+cat(sprintf("  %-5s %17s %15s\n", "exp", "estimate", "95% CI"))
+for (nm in exps) {
   exp <- ActivationComparisonExps[[nm]]
-  
-  n <- length(exp$test_results$correct)
-  k <- sum(exp$test_results$correct)
-  
-  alpha = 0.9
-  a0 = 0.5
-  b0 = 0.5
-  
-  a1 = a0 + k # suksesser
-  b1 = b0 + (n-k) #feil
-  iCDF <- function(x) {
-    stopifnot(x >= 0)
-    stopifnot(x <= 1)
-    qbeta(x,a1,b1)
-  }
-  I = c(iCDF(1-alpha/2),iCDF(alpha/2))
-  cat(sprintf("%s: I = [%f, %f], \t accuracy: %f\n",nm, I[1], I[2], exp$summary$metrics$test$accuracy))
+
+  n <- exp$summary$metrics$test$num_samples
+  k <- exp$summary$metrics$test$num_correct
+
+  ci <- symmetric_ci(k, n, 0.95)
+  cat(
+    sprintf(
+      "  %-10s %10.4f [%9.4f, %9.4f]\n",
+      nm,
+      ci$estimate,
+      ci$lower,
+      ci$upper
+    )
+  )
 }
 
-message("\n---  Test Accuracy withConfidence interval wilson ---")
+
+message("\n---  Test Accuracy with Wilson confidence interval ---")
+cat(sprintf("  %-5s %17s %15s\n", "exp", "estimate", "95% CI"))
 for (nm in exps) {
   exp <- ActivationComparisonExps[[nm]]
   metrics <- exp$summary$metrics
   n_correct <- metrics$test$num_correct
   n_total <- metrics$test$num_samples
-
-  ci <- accuracy_ci_wilson(n_correct, n_total)
-  cat(sprintf("  %s: %.1f%% [%0.1f%%, %0.1f%%]\n",
-             nm, ci$estimate * 100, ci$lower * 100, ci$upper * 100))
+  
+  ci <- wilson_ci(n_correct, n_total, 0.95)
+  cat(
+    sprintf(
+      "  %-10s %10.4f [%9.4f, %9.4f]\n",
+      nm,
+      ci$estimate,
+      ci$lower,
+      ci$upper
+    )
+  )
 }
 
-stop()
+stop("Stopping early")
 
 
 
@@ -143,23 +157,35 @@ message("  Created: output/demo_validation_curves.pdf\n")
 message("\n--- 5b. Forprosjekt Visualizations ---\n")
 
 # 3D Binomial surface (using image/contour instead of persp for readability)
-plot_binom_surface(n = 758, file = file.path(output_dir, "binom_surface.pdf"))
+plot_binom_surface(n = 758,
+                   file = file.path(output_dir, "binom_surface.pdf"))
 message("  Created: output/binom_surface.pdf (binomial surface)\n")
 
 # Confusion matrix for best model
 cm_exp <- exps$exp_048$confusion_matrix
-plot_confusion_matrix(cm_exp, file = file.path(output_dir, "confusion_matrix_exp048.pdf"),
-                    max_classes = 50)
+plot_confusion_matrix(
+  cm_exp,
+  file = file.path(output_dir, "confusion_matrix_exp048.pdf"),
+  max_classes = 50
+)
 message("  Created: output/confusion_matrix_exp048.pdf\n")
 
 # Scatter: Learning rate vs Accuracy
-plot_hyperparam_vs_metric(exps, "learning_rate", "accuracy_test",
-                        file = file.path(output_dir, "scatter_lr_vs_accuracy.pdf"))
+plot_hyperparam_vs_metric(
+  exps,
+  "learning_rate",
+  "accuracy_test",
+  file = file.path(output_dir, "scatter_lr_vs_accuracy.pdf")
+)
 message("  Created: output/scatter_lr_vs_accuracy.pdf\n")
 
-# Scatter: Dropout vs Accuracy  
-plot_hyperparam_vs_metric(exps, "dropout", "accuracy_test",
-                        file = file.path(output_dir, "scatter_dropout_vs_accuracy.pdf"))
+# Scatter: Dropout vs Accuracy
+plot_hyperparam_vs_metric(
+  exps,
+  "dropout",
+  "accuracy_test",
+  file = file.path(output_dir, "scatter_dropout_vs_accuracy.pdf")
+)
 message("  Created: output/scatter_dropout_vs_accuracy.pdf\n")
 
 # --- 6. BOOTSTRAP ANALYSIS ---
@@ -167,12 +193,23 @@ message("\n--- 6. Bootstrap Analysis ---\n")
 
 # Bootstrap CI for exp_048
 boot_result <- bootstrap_accuracy_ci(exps$exp_048$test_results, n_bootstrap = 500)
-cat("  exp_048 bootstrap CI:", round(boot_result$ci_lower, 4), "-", round(boot_result$ci_upper, 4), "\n")
+cat(
+  "  exp_048 bootstrap CI:",
+  round(boot_result$ci_lower, 4),
+  "-",
+  round(boot_result$ci_upper, 4),
+  "\n"
+)
 
 # Bootstrap comparison
 boot_cmp <- bootstrap_comparison(exps$exp_048$test_results,
-                                   exps$exp_050$test_results, n_bootstrap = 500)
-cat("  Difference CI:", round(boot_cmp$ci_lower, 4), "-", round(boot_cmp$ci_upper, 4), "\n")
+                                 exps$exp_050$test_results,
+                                 n_bootstrap = 500)
+cat("  Difference CI:",
+    round(boot_cmp$ci_lower, 4),
+    "-",
+    round(boot_cmp$ci_upper, 4),
+    "\n")
 
 # --- 7. ENTROPY & CALIBRATION ---
 message("\n--- 7. Entropy & Calibration ---\n")
@@ -187,7 +224,7 @@ cat("  exp_048 mean entropy:", round(mean(entropies, na.rm = TRUE), 4), "\n")
 
 # Reliability diagram
 plot_reliability_diagram(exps$exp_048$test_results,
-                        file = file.path(output_dir, "demo_reliability.pdf"))
+                         file = file.path(output_dir, "demo_reliability.pdf"))
 message("  Created: output/demo_reliability.pdf\n")
 
 message("=== Demo Complete ===\n")

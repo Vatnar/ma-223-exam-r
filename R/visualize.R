@@ -164,7 +164,7 @@ plot_accuracy_comparison <- function(exps, metric = "accuracy_test", file = NULL
     n_correct <- metrics$test$num_correct
     n_total <- metrics$test$num_samples
 
-    accuracy_ci_wilson(n_correct, n_total)
+    wilson_ci(n_correct, n_total)
   })
 
   acc_with_ci <- Filter(function(x) !is.null(x), acc_with_ci)
