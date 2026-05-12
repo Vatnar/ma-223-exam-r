@@ -259,15 +259,31 @@ plot_hyperparam_vs_metric <- function(exps, param = "learning_rate",
     pdf(file, width = width, height = height)
   }
 
-  plot(x_vals, y_vals, xlab = param, ylab = metric,
-       main = paste(param, "vs", metric),
-       pch = 19, col = "steelblue")
+  means <- tapply(y_vals, x_vals, mean)
+  x_unique <- as.numeric(names(means))
 
-  if (length(x_vals) > 2) {
-    loess_fit <- loess(y_vals ~ x_vals)
-    x_order <- order(x_vals)
-    lines(x_vals[x_order], fitted(loess_fit)[x_order],
-          col = "red", lty = 2)
+  plot(x_unique, means, xlab = param, ylab = paste("Mean", metric),
+       main = paste(param, "vs", metric),
+       pch = 19, col = "steelblue", log = "x")
+
+  if (length(x_unique) >= 3) {
+    x_order <- order(x_unique)
+    x_sorted <- x_unique[x_order]
+    y_sorted <- means[x_order]
+    x_log <- log2(x_sorted)
+    k <- max(1, round(length(y_sorted) * 0.1))
+    smoothed <- y_sorted
+    for (i in 1:length(y_sorted)) {
+      start <- max(1, i - k)
+      end <- min(length(y_sorted), i + k)
+      smoothed[i] <- mean(y_sorted[start:end])
+    }
+    lines(x_sorted, smoothed, col = "red", lwd = 2, lty = 2)
+  } else if (length(x_unique) >= 2) {
+    x_order <- order(x_unique)
+    x_sorted <- x_unique[x_order]
+    y_sorted <- means[x_order]
+    lines(x_sorted, y_sorted, col = "red", lwd = 2, lty = 2)
   }
   
   if (draw_labels) {
