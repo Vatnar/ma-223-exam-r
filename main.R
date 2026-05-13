@@ -90,12 +90,32 @@ plot_binomial_with_ci(named_exps,
 # Header and Binomial (symmetric) CI table
 cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
 for (nm in exps_list) {
+exps_list <- c('exp_026', 'exp_027', 'exp_028', 'exp_029', 'exp_030')
+named_exps <- ActivationComparisonExps[exps_list]
+names(named_exps) <- exps_list
+set_plot_theme(theme_name)
+plot_binomial_with_ci(named_exps,
+                      file = file.path(get_output_dir(), "binomial_with_ci.pdf"))
+
+# Header and Binomial (symmetric) CI table
+cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
+for (nm in exps_list) {
   exp <- ActivationComparisonExps[[nm]]
+  
   
   n <- exp$summary$metrics$test$num_samples
   k <- exp$summary$metrics$test$num_correct
   
+  
   ci <- symmetric_ci(k, n, 0.95)
+  cat(sprintf(
+    "  %-12s %-12s %12.4f [%10.4f, %10.4f]\n",
+    nm,
+    as.character(exp$summary$hyperparameters$activation),
+    ci$estimate,
+    ci$lower,
+    ci$upper
+  ))
   cat(sprintf(
     "  %-12s %-12s %12.4f [%10.4f, %10.4f]\n",
     nm,
@@ -107,6 +127,8 @@ for (nm in exps_list) {
 }
 
 message("\n---  Test Accuracy with Wilson confidence interval ---")
+cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
+for (nm in exps_list) {
 cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
 for (nm in exps_list) {
   exp <- ActivationComparisonExps[[nm]]
@@ -123,9 +145,17 @@ for (nm in exps_list) {
     as.numeric(ci$conf.int[1]),
     as.numeric(ci$conf.int[2])
   ))
+  ci <- prop.test(n_correct, n_total, conf.level = 0.95)
+  cat(sprintf(
+    "  %-12s %-12s %12.4f [%10.4f, %10.4f]\n",
+    nm,
+    as.character(exp$summary$hyperparameters$activation),
+    as.numeric(ci$estimate),
+    as.numeric(ci$conf.int[1]),
+    as.numeric(ci$conf.int[2])
+  ))
 }
 
-stop("Stopping early")
 
 
 
@@ -164,13 +194,43 @@ plot_hyperparam_vs_metric(
   draw_labels = FALSE
 )
 
+# === HYPOTHESES TESTS === #
 
-# Experiment Name
-# 27 
+#View(Experiments[["LinearRepetitionManyEpoch"]])
+
+ExpGroup <- Experiments[["LinearRepetitionManyEpoch"]]
+ExpPrefixes <- c("exp_001", "exp_002")
+
+exp_001_data <- ExpGroup[grep("^exp_001", names(ExpGroup))]
+exp_002_data <- ExpGroup[grep("^exp_002", names(ExpGroup))]
 
 
+gelu_acc <- sapply(exp_001_data, function(rep) {
+  rep$summary$metrics$test$accuracy
+})
+linear_acc <- sapply(exp_002_data, function(rep) {
+  rep$summary$metrics$test$accuracy
+})
+
+# acc_001 is GeLU and acc_002 is linear (activations)
+message("\n--- Hypothesis t-test GeLU vs. Linear activation ---")
+print(t.test(linear_acc, gelu_acc, paired = TRUE, alternative = "less"))
+
+# --- mcnemar --- 
 
 
+ExpA <- Experiments[["ActivationComparison"]][["exp_026"]]$test_results$correct
+ExpB <- Experiments[["ActivationComparison"]][["exp_027"]]$test_results$correct
+
+table_mcnemar <- table(Model_A = ExpA, Model_B = ExpB)
+print(table_mcnemar)
+mcnemar_result <- mcnemar.test(table_mcnemar)
+print(mcnemar_result)
+
+# 
+
+
+#View(exp_002_data)
 
 stop()
 
@@ -253,3 +313,4 @@ message("  Created: output/demo_reliability.pdf\n")
 
 message("=== Demo Complete ===\n")
 message("Output files in: ", output_dir, "\n")
+
