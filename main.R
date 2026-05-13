@@ -33,6 +33,7 @@ source("R/tests.R")
 source("R/compare.R")
 source("R/visualize.R")
 source("R/bootstrap.R")
+source("R/uncertainty.R")
 
 message("Package loaded successfully.\n")
 
@@ -87,9 +88,7 @@ set_plot_theme(theme_name)
 plot_binomial_with_ci(named_exps,
                       file = file.path(get_output_dir(), "binomial_with_ci.pdf"))
 
-# Header and Binomial (symmetric) CI table
-cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
-for (nm in exps_list) {
+
 exps_list <- c('exp_026', 'exp_027', 'exp_028', 'exp_029', 'exp_030')
 named_exps <- ActivationComparisonExps[exps_list]
 names(named_exps) <- exps_list
@@ -129,8 +128,6 @@ for (nm in exps_list) {
 message("\n---  Test Accuracy with Wilson confidence interval ---")
 cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
 for (nm in exps_list) {
-cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
-for (nm in exps_list) {
   exp <- ActivationComparisonExps[[nm]]
   metrics <- exp$summary$metrics
   n_correct <- metrics$test$num_correct
@@ -156,8 +153,40 @@ for (nm in exps_list) {
   ))
 }
 
+# --- 8. UNCERTAINTY ANALYSIS ---
+message("\n--- 8. Prediktiv usikkerhet ---\n")
 
+exp_path <- file.path(root, "results", "experiments", "ActivationComparison", "exp_027")
+if (dir.exists(exp_path)) {
+  results <- analyze_experiment_uncertainty(exp_path)
 
+  cat("Summary:\n")
+  cat("  Samples:", results$summary$n_samples, "\n")
+  cat("  Overall accuracy:", round(results$summary$overall_accuracy, 4), "\n")
+  cat("  Mean confidence:", round(results$summary$mean_confidence, 4), "\n")
+  cat("  Median confidence:", round(results$summary$median_confidence, 4), "\n")
+
+  cat("\nAccuracy by confidence level:\n")
+  print(results$by_confidence)
+
+  cat("\nCorrelation test (confidence vs correct):\n")
+  cat("  r =", round(results$correlation$estimate, 4), "\n")
+  cat("  p-value =", format(results$correlation$p.value, scientific = TRUE), "\n")
+
+  cat("\nCalibration:\n")
+  print(results$calibration)
+
+  # Plot confidence histogram
+  test_results <- read_csv(file.path(exp_path, "test_results.csv"), show_col_types = FALSE)
+  p1 <- plot_confidence_histogram(test_results, "Confidence Distribution (exp_027)")
+  ggsave(file.path(output_dir, "confidence_histogram.pdf"), p1, width = 8, height = 4)
+
+  # Plot accuracy by confidence
+  p2 <- plot_confidence_accuracy(results$by_confidence, "Accuracy by Confidence Level")
+  ggsave(file.path(output_dir, "confidence_accuracy.pdf"), p2, width = 6, height = 4)
+
+  message("\nPlots saved to output/\n")
+}
 
 
 
