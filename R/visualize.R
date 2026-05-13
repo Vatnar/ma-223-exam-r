@@ -429,3 +429,73 @@ plot_bootstrap_dist <- function(boot_result, file = NULL,
 
   invisible(NULL)
 }
+
+plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5) {
+  if (length(exps) == 0) {
+    warning("No experiments provided")
+    return(NULL)
+  }
+  
+  # Derive activation names (fallback to existing names)
+  act_names <- sapply(exps, function(e) {
+    act <- NULL
+    if (!is.null(e$summary$hyperparameters$activation)) act <- e$summary$hyperparameters$activation
+    if (is.null(act) && !is.null(e$config$activation)) act <- e$config$activation
+    if (is.null(act)) act <- NA
+    as.character(act)
+  })
+  # Use activation names where available; ensure unique names for legend
+  use_names <- ifelse(is.na(act_names) | act_names == "NA" | act_names == "", names(exps), act_names)
+  use_names <- make.unique(use_names)
+  names(exps) <- use_names
+  
+  if (!is.null(file)) {
+    pdf(file, width = width, height = height)
+  }
+  
+  k_vals <- sapply(exps, function(exp) exp$summary$metrics$test$num_correct)
+  n_vals <- sapply(exps, function(exp) exp$summary$metrics$test$num_samples)
+  p_hat <- k_vals / n_vals
+  max_n <- max(n_vals)
+  all_probs <- unlist(lapply(seq_along(n_vals), function(i) dbinom(0:n_vals[i], n_vals[i], p_hat[i])))
+  max_prob <- max(all_probs)
+  max_n <- min(max_n, 500)
+  total_tests <- paste0("Total tests: ", n_vals[1])
+  
+  plot(NULL, xlim = c(0, max_n), ylim = c(0, max_prob * 1.2),
+       xlab = "Number of successes (k)", ylab = "Probability",
+       main = paste("Binomial Distributions with Symmetric Credible Intervals\n", total_tests))
+  
+  cols <- rainbow(length(exps))
+  for (i in seq_along(exps)) {
+    n <- n_vals[i]
+    k <- k_vals[i]
+    ci <- symmetric_ci(k, n, 0.95)
+    p <- p_hat[i]
+    
+    k_all <- 0:n
+    probs <- dbinom(k_all, n, p)
+    
+    mask <- probs > 1e-10
+    k_clip <- k_all[mask]
+    probs_clip <- probs[mask]
+    
+    x_poly <- c(k_clip, rev(k_clip))
+    y_poly <- c(probs_clip, rep(0, length(probs_clip)))
+    polygon(x_poly, y_poly,
+            col = adjustcolor(cols[i], alpha.f = 0.3), border = NA)
+    lines(k_clip, probs_clip, type = "l", col = cols[i], lwd = 2)
+    abline(v = k, col = cols[i], lty = 2, lwd = 1.5)
+    abline(v = ci$lower * n, col = cols[i], lty = 3)
+    abline(v = ci$upper * n, col = cols[i], lty = 3)
+  }
+  
+  # Legend shows activation function names (names(exps) were set above)
+  legend("topright", legend = names(exps), col = cols, lty = 1, lwd = 2, cex = 0.8, bg = "white")
+  
+  if (!is.null(file)) {
+    dev.off()
+  }
+  
+  invisible(NULL)
+}

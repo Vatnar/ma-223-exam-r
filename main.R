@@ -80,49 +80,52 @@ message("\nLoading: ",
 message("\n--- Credibility interval (symmetric Beta posterior) ---")
 ActivationComparisonExps <- load_experiments(exp_ids, root, "ActivationComparison")
 
-exps <- c('exp_027', 'exp_028', 'exp_030')
+exps_list <- c('exp_026', 'exp_027', 'exp_028', 'exp_029', 'exp_030')
+named_exps <- ActivationComparisonExps[exps_list]
+names(named_exps) <- exps_list
+set_plot_theme(theme_name)
+plot_binomial_with_ci(named_exps,
+                      file = file.path(get_output_dir(), "binomial_with_ci.pdf"))
 
-cat(sprintf("  %-5s %17s %15s\n", "exp", "estimate", "95% CI"))
-for (nm in exps) {
+# Header and Binomial (symmetric) CI table
+cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
+for (nm in exps_list) {
   exp <- ActivationComparisonExps[[nm]]
-
+  
   n <- exp$summary$metrics$test$num_samples
   k <- exp$summary$metrics$test$num_correct
-
+  
   ci <- symmetric_ci(k, n, 0.95)
-  cat(
-    sprintf(
-      "  %-10s %10.4f [%9.4f, %9.4f]\n",
-      nm,
-      ci$estimate,
-      ci$lower,
-      ci$upper
-    )
-  )
+  cat(sprintf(
+    "  %-12s %-12s %12.4f [%10.4f, %10.4f]\n",
+    nm,
+    as.character(exp$summary$hyperparameters$activation),
+    ci$estimate,
+    ci$lower,
+    ci$upper
+  ))
 }
 
-
 message("\n---  Test Accuracy with Wilson confidence interval ---")
-cat(sprintf("  %-5s %17s %15s\n", "exp", "estimate", "95% CI"))
-for (nm in exps) {
+cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
+for (nm in exps_list) {
   exp <- ActivationComparisonExps[[nm]]
   metrics <- exp$summary$metrics
   n_correct <- metrics$test$num_correct
   n_total <- metrics$test$num_samples
   
-  ci <- prop.test(n_correct, n_total, conf.level=0.95)
-  cat(
-    sprintf(
-      "  %-10s %10.4f [%9.4f, %9.4f]\n",
-      nm,
-      ci$estimate,
-      ci$conf.int[1],
-      ci$conf.[2]
-    )
-  )
+  ci <- prop.test(n_correct, n_total, conf.level = 0.95)
+  cat(sprintf(
+    "  %-12s %-12s %12.4f [%10.4f, %10.4f]\n",
+    nm,
+    as.character(exp$summary$hyperparameters$activation),
+    as.numeric(ci$estimate),
+    as.numeric(ci$conf.int[1]),
+    as.numeric(ci$conf.int[2])
+  ))
 }
 
-# stop("Stopping early")
+stop("Stopping early")
 
 
 
