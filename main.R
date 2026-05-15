@@ -28,14 +28,13 @@ message("Available experiment groups: ", paste(groups, collapse = ", "), "\n")
 # Load all experiments
 experiments <- load_all_experiment_groups()
 
--
 message("\n--- Credibility interval (symmetric Beta posterior) ---")
 exps_list <- c('exp_026', 'exp_027', 'exp_028', 'exp_029', 'exp_030')
 run_ci_analysis(experiments$ActivationComparison, exps_list, output_dir, theme_name)
 
 message("\n--- Uncertainty Analysis ---")
 exp_path <- file.path(root, "results", "experiments", "ActivationComparison", "exp_027")
-run_uncertainty_analysis(exp_path, output_dir)
+run_uncertainty_analysis(exp_path, output_dir, theme_name)
 
 message("\n--- Creating Visualizations ---")
 run_visualization_suite(experiments, output_dir, theme_name)

@@ -22,7 +22,10 @@ analyze_confidence <- function(test_results, n_bins = 4) {
   return(results)
 }
 
-plot_confidence_histogram <- function(test_results, title = "Confidence Distribution") {
+plot_confidence_histogram <- function(test_results, title = "Confidence Distribution", theme_name = "poster") {
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
+  
   p <- ggplot(test_results, aes(x = confidence, fill = factor(correct, levels = c(0, 1)))) +
     geom_histogram(alpha = 0.7, bins = 30, position = "identity") +
     labs(
@@ -33,7 +36,7 @@ plot_confidence_histogram <- function(test_results, title = "Confidence Distribu
     ) +
     theme_minimal() +
     scale_fill_manual(
-      values = c("0" = "#e74c3c", "1" = "#2ecc71"),
+      values = c("0" = theme_colors$error, "1" = theme_colors$success),
       labels = c("Wrong", "Right")
     ) +
     theme(
@@ -44,7 +47,10 @@ plot_confidence_histogram <- function(test_results, title = "Confidence Distribu
   return(p)
 }
 
-plot_confidence_accuracy <- function(confidence_results, title = "Accuracy by Confidence Level") {
+plot_confidence_accuracy <- function(confidence_results, title = "Accuracy by Confidence Level", theme_name = "poster") {
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
+  
   confidence_results <- confidence_results %>%
     mutate(
       bin_label = case_when(
@@ -57,9 +63,9 @@ plot_confidence_accuracy <- function(confidence_results, title = "Accuracy by Co
     )
 
   p <- ggplot(confidence_results, aes(x = factor(bin_label, levels = c("0.00-0.25", "0.25-0.50", "0.50-0.75", "0.75-1.00")), y = accuracy)) +
-    geom_bar(stat = "identity", fill = "#3498db", alpha = 0.8) +
-    geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, color = "#2c3e50") +
-    geom_text(aes(label = sprintf("%.1f%%", accuracy * 100)), vjust = -0.5, color = "#2c3e50", size = 3.5) +
+    geom_bar(stat = "identity", fill = theme_colors$primary, alpha = 0.8) +
+    geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, color = theme_colors$accent) +
+    geom_text(aes(label = sprintf("%.1f%%", accuracy * 100)), vjust = -0.5, color = theme_colors$accent, size = 3.5) +
     labs(
       title = title,
       x = "Confidence Interval (model certainty)",

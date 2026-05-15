@@ -23,7 +23,16 @@ get_theme_colors <- function(theme = "report") {
       secondary = "#457B9D",
       accent = "#1D3557",
       background = "#F1FAEE",
-      palette = c("#E63946", "#457B9D", "#1D3557", "#A8DADC", "#F4A261", "#2A9D8F")
+      palette = c("#E63946", "#457B9D", "#1D3557", "#A8DADC", "#F4A261", "#2A9D8F"),
+      # Semantic colors for specific use cases
+      success = "#2ecc71",      # For "correct", "good" indicators
+      error = "#e74c3c",        # For "wrong", "error" indicators
+      gradient_low = "white",
+      gradient_high = "#1D3557",
+      confusion_matrix = function(n = 100) colorRampPalette(c("white", "#1D3557"))(n),
+      binomial_surface = function(n = 100) colorRampPalette(c("white", "#F1FAEE", "#F4A261", "#E63946"))(n),
+      grid = "gray80",
+      reference_line = "gray60"
     )
   } else {
     list(
@@ -31,16 +40,31 @@ get_theme_colors <- function(theme = "report") {
       secondary = "darkgray",
       accent = "black",
       background = "white",
-      palette = c("steelblue", "darkgray", "black", "lightgray", "firebrick", "forestgreen")
+      palette = c("steelblue", "darkgray", "black", "darkgray", "gray40", "gray60"),
+      # Semantic colors for specific use cases
+      success = "forestgreen",
+      error = "firebrick",
+      gradient_low = "white",
+      gradient_high = "steelblue",
+      confusion_matrix = function(n = 100) colorRampPalette(c("white", "steelblue"))(n),
+      binomial_surface = function(n = 100) colorRampPalette(c("white", "lightgray", "gray", "darkgray"))(n),
+      grid = "gray90",
+      reference_line = "gray70"
     )
   }
 }
 
-plot_training_curves <- function(exp, file = NULL, width = 10, height = 4) {
+plot_training_curves <- function(exp, file = NULL, width = 10, height = 4, theme_name = "poster") {
   if (is.null(exp)) {
     warning("Experiment is NULL")
     return(NULL)
   }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
+  train_col <- theme_colors$primary
+  valid_col <- theme_colors$secondary
+  test_col <- theme_colors$accent
 
   history_train <- exp$history_train
   history_valid <- exp$history_valid
@@ -67,22 +91,22 @@ plot_training_curves <- function(exp, file = NULL, width = 10, height = 4) {
   train_loss <- summary$metrics$train$final_loss
   valid_loss <- summary$metrics$valid$best_loss
 
-  plot(1, test_acc, pch = 19, cex = 2, col = "blue",
+  plot(1, test_acc, pch = 19, cex = 2, col = test_col,
        xlim = c(0, 2), ylim = c(0, 1),
        xlab = "", ylab = "Accuracy", main = "Final Accuracies")
-  points(2, valid_acc, pch = 19, cex = 2, col = "red")
-  points(1.5, train_acc, pch = 19, cex = 2, col = "green")
+  points(2, valid_acc, pch = 19, cex = 2, col = valid_col)
+  points(1.5, train_acc, pch = 19, cex = 2, col = train_col)
   axis(1, at = c(1, 1.5, 2), labels = c("Test", "Train", "Valid"))
   text(1, test_acc + 0.08, round(test_acc, 3), cex = 0.7)
   text(1.5, train_acc + 0.08, round(train_acc, 3), cex = 0.7)
   text(2, valid_acc + 0.08, round(valid_acc, 3), cex = 0.7)
 
-  plot(1:25, rep(train_loss, 25), type = "l", col = "green",
+  plot(1:25, rep(train_loss, 25), type = "l", col = train_col,
        xlab = "Epoch", ylab = "Loss", main = "Training/Valid Loss",
        ylim = c(0, max(train_loss, valid_loss, na.rm = TRUE) * 1.2))
-  lines(1:25, rep(valid_loss, 25), col = "red", lty = 2)
+  lines(1:25, rep(valid_loss, 25), col = valid_col, lty = 2)
   legend("topright", c("Train", "Valid"),
-         col = c("green", "red"), lty = c(1, 2), cex = 0.6)
+         col = c(train_col, valid_col), lty = c(1, 2), cex = 0.6)
 
   plot(1, 1, type = "n", axes = FALSE, xlab = "", ylab = "")
   text(1, 1, paste0(
@@ -107,11 +131,14 @@ plot_training_curves <- function(exp, file = NULL, width = 10, height = 4) {
 }
 
 plot_confusion_matrix <- function(cm, file = NULL, max_classes = 50,
-                              width = 8, height = 8) {
+                              width = 8, height = 8, theme_name = "poster") {
   if (is.null(cm)) {
     warning("Confusion matrix is NULL")
     return(NULL)
   }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
 
   cm_mat <- get_confusion_matrix(cm, n_classes = max_classes)
 
@@ -124,7 +151,7 @@ plot_confusion_matrix <- function(cm, file = NULL, max_classes = 50,
     pdf(file, width = width, height = height)
   }
 
-  cols <- colorRampPalette(c("white", "navy"))(100)
+  cols <- theme_colors$confusion_matrix(100)
 
   n_rows <- nrow(cm_mat)
   n_cols <- ncol(cm_mat)
@@ -133,8 +160,8 @@ plot_confusion_matrix <- function(cm, file = NULL, max_classes = 50,
         col = cols, xlab = "Predicted", ylab = "True",
         main = "Confusion Matrix (log10 scale)")
 
-  abline(v = seq(0.5, max_classes + 0.5, by = 5), col = "gray", lty = 1)
-  abline(h = seq(0.5, max_classes + 0.5, by = 5), col = "gray", lty = 1)
+  abline(v = seq(0.5, max_classes + 0.5, by = 5), col = theme_colors$grid, lty = 1)
+  abline(h = seq(0.5, max_classes + 0.5, by = 5), col = theme_colors$grid, lty = 1)
 
   if (!is.null(file)) {
     dev.off()
@@ -144,11 +171,14 @@ plot_confusion_matrix <- function(cm, file = NULL, max_classes = 50,
 }
 
 plot_accuracy_comparison <- function(exps, metric = "accuracy_test", file = NULL,
-                            width = 10, height = 5) {
+                             width = 10, height = 5, theme_name = "poster") {
   if (is.null(exps) || length(exps) == 0) {
     warning("No experiments to plot")
     return(NULL)
   }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
 
   summary_df <- summarize_experiments(exps)
 
@@ -188,7 +218,7 @@ plot_accuracy_comparison <- function(exps, metric = "accuracy_test", file = NULL
          ylim = c(0, max(uppers) * 1.1),
          xlab = "Experiment", ylab = "Accuracy",
          main = paste("Test Accuracy Comparison (n =", test_n, ")"),
-         col = "steelblue", las = 2)
+         col = theme_colors$primary, las = 2)
 
   arrows(1:length(estimates), estimates,
          1:length(estimates), estimates + yerr[2, ],
@@ -197,7 +227,7 @@ plot_accuracy_comparison <- function(exps, metric = "accuracy_test", file = NULL
          1:length(estimates), estimates,
          angle = 90, length = 0.05)
 
-  abline(h = 0, col = "gray")
+  abline(h = 0, col = theme_colors$reference_line)
 
   par(mar = c(5.1, 4.1, 4.1, 2.1))
 
@@ -209,7 +239,10 @@ plot_accuracy_comparison <- function(exps, metric = "accuracy_test", file = NULL
 }
 
 plot_binom_surface <- function(n = 758, p_val = 0.5, file = NULL,
-                            width = 8, height = 6) {
+                             width = 8, height = 6, theme_name = "poster") {
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
+  
   if (!is.null(file)) {
     pdf(file, width = width, height = height)
   }
@@ -221,14 +254,14 @@ plot_binom_surface <- function(n = 758, p_val = 0.5, file = NULL,
     dbinom(k, n, prob)
   })
 
-  cols <- colorRampPalette(c("white", "lightyellow", "orange", "red"))(100)
+  cols <- theme_colors$binomial_surface(100)
 
   image(x_vals, p_vals, z, col = cols,
        xlab = "Number of successes (k)",
        ylab = "Probability (p)",
        main = paste("Binomial(n =", n, ", p) PMF"))
 
-  contour(x_vals, p_vals, z, add = TRUE, col = "darkgray",
+  contour(x_vals, p_vals, z, add = TRUE, col = theme_colors$secondary,
           levels = c(0.001, 0.01, 0.05, 0.1), labcex = 0.7)
 
   if (!is.null(file)) {
@@ -239,12 +272,15 @@ plot_binom_surface <- function(n = 758, p_val = 0.5, file = NULL,
 }
 
 plot_hyperparam_vs_metric <- function(exps, param = "learning_rate",
-                                  metric = "accuracy_test",
-                                  file = NULL, width = 6, height = 4, draw_labels=TRUE) {
+                                   metric = "accuracy_test",
+                                   file = NULL, width = 6, height = 4, draw_labels=TRUE, theme_name = "poster") {
   if (is.null(exps) || length(exps) == 0) {
     warning("No experiments to plot")
     return(NULL)
   }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
 
   summary_df <- summarize_experiments(exps)
 
@@ -267,7 +303,7 @@ plot_hyperparam_vs_metric <- function(exps, param = "learning_rate",
 
   plot(x_unique, means, xlab = param, ylab = paste("Mean", metric),
        main = paste(param, "vs", metric),
-       pch = 19, col = "steelblue", log = "x")
+       pch = 19, col = theme_colors$primary, log = "x")
 
   if (length(x_unique) >= 3) {
     x_order <- order(x_unique)
@@ -281,12 +317,12 @@ plot_hyperparam_vs_metric <- function(exps, param = "learning_rate",
       end <- min(length(y_sorted), i + k)
       smoothed[i] <- mean(y_sorted[start:end])
     }
-    lines(x_sorted, smoothed, col = "red", lwd = 2, lty = 2)
+    lines(x_sorted, smoothed, col = theme_colors$accent, lwd = 2, lty = 2)
   } else if (length(x_unique) >= 2) {
     x_order <- order(x_unique)
     x_sorted <- x_unique[x_order]
     y_sorted <- means[x_order]
-    lines(x_sorted, y_sorted, col = "red", lwd = 2, lty = 2)
+    lines(x_sorted, y_sorted, col = theme_colors$accent, lwd = 2, lty = 2)
   }
   
   if (draw_labels) {
@@ -301,11 +337,14 @@ plot_hyperparam_vs_metric <- function(exps, param = "learning_rate",
   invisible(NULL)
 }
 
-plot_validation_curves <- function(exps, file = NULL, width = 8, height = 5) {
+plot_validation_curves <- function(exps, file = NULL, width = 8, height = 5, theme_name = "poster") {
   if (is.null(exps) || length(exps) == 0) {
     warning("No experiments to plot")
     return(NULL)
   }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
 
   if (!is.null(file)) {
     pdf(file, width = width, height = height)
@@ -320,9 +359,18 @@ plot_validation_curves <- function(exps, file = NULL, width = 8, height = 5) {
   })
 
   if (any(has_history)) {
-    cols <- rainbow(length(exps))
+    # Use theme palette instead of rainbow
+    n_exps <- length(exps)
+    palette <- theme_colors$palette
+    cols <- if (n_exps <= length(palette)) {
+      palette[1:n_exps]
+    } else {
+      # If more experiments than palette colors, recycle with interpolation
+      colorRampPalette(palette)(n_exps)
+    }
 
     first_exp <- TRUE
+    col_idx <- 1
 
     for (nm in names(exps)) {
       exp <- exps[[nm]]
@@ -335,15 +383,16 @@ plot_validation_curves <- function(exps, file = NULL, width = 8, height = 5) {
 
       if (first_exp) {
         plot(history$epoch, history$accuracy,
-             type = "l", col = cols[which(nm == names(exps))],
+             type = "l", col = cols[col_idx],
              xlab = "Epoch", ylab = "Validation Accuracy",
              main = "Validation Accuracy Curves",
              ylim = c(0, 1))
         first_exp <- FALSE
       } else {
         lines(history$epoch, history$accuracy,
-             col = cols[which(nm == names(exps))])
+             col = cols[col_idx])
       }
+      col_idx <- col_idx + 1
     }
 
     legend("bottomright", names(exps), col = cols, lty = 1, cex = 0.7)
@@ -353,7 +402,7 @@ plot_validation_curves <- function(exps, file = NULL, width = 8, height = 5) {
            ylim = c(0, 1),
            xlab = "Experiment", ylab = "Best Validation Accuracy",
            main = "Validation Accuracy (from summary)",
-           col = "steelblue", las = 2)
+           col = theme_colors$primary, las = 2)
 
     text(1:length(exps), summary_df$accuracy_valid + 0.03,
          round(summary_df$accuracy_valid, 3), cex = 0.7)
@@ -367,11 +416,14 @@ plot_validation_curves <- function(exps, file = NULL, width = 8, height = 5) {
 }
 
 plot_reliability_diagram <- function(test_results, n_bins = 10, file = NULL,
-                                  width = 6, height = 5) {
+                                   width = 6, height = 5, theme_name = "poster") {
   if (is.null(test_results) || !"confidence" %in% names(test_results)) {
     warning("Test results must have confidence scores")
     return(NULL)
   }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
 
   rel_data <- reliability_diagram_data(test_results, n_bins)
 
@@ -387,14 +439,14 @@ plot_reliability_diagram <- function(test_results, n_bins = 10, file = NULL,
   }
 
   plot(rel_data$bin_center, rel_data$actual_accuracy,
-       pch = 19, col = "steelblue", cex = 1.5,
+       pch = 19, col = theme_colors$primary, cex = 1.5,
        xlab = "Confidence", ylab = "Actual Accuracy",
        main = paste("Reliability Diagram (ECE =", round(ece, 3), ")"),
        xlim = c(0, 1), ylim = c(0, 1))
 
-  lines(rel_data$bin_center, rel_data$actual_accuracy, col = "steelblue", lty = 1)
+  lines(rel_data$bin_center, rel_data$actual_accuracy, col = theme_colors$primary, lty = 1)
 
-  abline(0, 1, col = "gray", lty = 2)
+  abline(0, 1, col = theme_colors$reference_line, lty = 2)
 
   if (!is.null(file)) {
     dev.off()
@@ -404,11 +456,14 @@ plot_reliability_diagram <- function(test_results, n_bins = 10, file = NULL,
 }
 
 plot_bootstrap_dist <- function(boot_result, file = NULL,
-                               width = 6, height = 4) {
+                                width = 6, height = 4, theme_name = "poster") {
   if (is.null(boot_result) || is.null(boot_result$boot_dist)) {
     warning("No bootstrap distribution available")
     return(NULL)
   }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
 
   if (!is.null(file)) {
     pdf(file, width = width, height = height)
@@ -417,14 +472,14 @@ plot_bootstrap_dist <- function(boot_result, file = NULL,
   hist(boot_result$boot_dist,
        xlab = "Accuracy / Difference",
        main = paste("Bootstrap Distribution (n =", boot_result$n_bootstrap, ")"),
-       col = "lightgray", border = "gray")
+       col = theme_colors$secondary, border = theme_colors$grid)
 
-  abline(v = boot_result$estimate, col = "blue", lwd = 2)
-  abline(v = boot_result$ci_lower, col = "red", lty = 2)
-  abline(v = boot_result$ci_upper, col = "red", lty = 2)
+  abline(v = boot_result$estimate, col = theme_colors$primary, lwd = 2)
+  abline(v = boot_result$ci_lower, col = theme_colors$accent, lty = 2)
+  abline(v = boot_result$ci_upper, col = theme_colors$accent, lty = 2)
 
   legend("topright", c("Estimate", "95% CI"),
-         col = c("blue", "red"), lty = c(1, 2), cex = 0.7)
+         col = c(theme_colors$primary, theme_colors$accent), lty = c(1, 2), cex = 0.7)
 
   if (!is.null(file)) {
     dev.off()
@@ -433,11 +488,14 @@ plot_bootstrap_dist <- function(boot_result, file = NULL,
   invisible(NULL)
 }
 
-plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5) {
+plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5, theme_name = "poster") {
   if (length(exps) == 0) {
     warning("No experiments provided")
     return(NULL)
   }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
   
   # Derive activation names (fallback to existing names)
   act_names <- sapply(exps, function(e) {
@@ -469,7 +527,15 @@ plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5) {
        xlab = "Number of successes (k)", ylab = "Probability",
        main = paste("Binomial Distributions with Symmetric Credible Intervals\n", total_tests))
   
-  cols <- rainbow(length(exps))
+  # Use theme palette instead of rainbow
+  n_exps <- length(exps)
+  palette <- theme_colors$palette
+  cols <- if (n_exps <= length(palette)) {
+    palette[1:n_exps]
+  } else {
+    colorRampPalette(palette)(n_exps)
+  }
+  
   for (i in seq_along(exps)) {
     n <- n_vals[i]
     k <- k_vals[i]
@@ -591,6 +657,264 @@ plot_activation_functions <- function(output_dir, theme_name = "poster") {
     plot = combined_plot,
     width = 12,
     height = 8,
+    dpi = 300
+  )
+  
+  invisible(NULL)
+}
+
+#' Plot top N models by test accuracy
+#' @param experiments List of all experiment objects (flattened)
+#' @param n Number of top models to show (default 5)
+#' @param output_dir Output directory
+#' @param theme_name Theme name for styling
+#' @return Invisible NULL
+plot_top_n_models <- function(experiments, n = 5, output_dir, theme_name = "poster") {
+  if (is.null(experiments) || length(experiments) == 0) {
+    warning("No experiments provided for top N plot")
+    return(invisible(NULL))
+  }
+  
+  # Extract data for all experiments
+  plot_data <- data.frame(
+    exp_id = character(),
+    activation = character(),
+    accuracy = numeric(),
+    ci_lower = numeric(),
+    ci_upper = numeric(),
+    stringsAsFactors = FALSE
+  )
+  
+  for (exp_name in names(experiments)) {
+    exp <- experiments[[exp_name]]
+    if (is.null(exp) || is.null(exp$summary)) next
+    
+    metrics <- exp$summary$metrics
+    if (is.null(metrics$test)) next
+    
+    n_correct <- metrics$test$num_correct
+    n_total <- metrics$test$num_samples
+    
+    if (is.null(n_correct) || is.null(n_total) || n_total == 0) next
+    
+    # Calculate Wilson CI
+    ci <- wilson_ci(n_correct, n_total)
+    
+    # Get activation function
+    activation <- if (!is.null(exp$summary$hyperparameters$activation)) {
+      as.character(exp$summary$hyperparameters$activation)
+    } else if (!is.null(exp$config$activation)) {
+      as.character(exp$config$activation)
+    } else {
+      "unknown"
+    }
+    
+    plot_data <- rbind(plot_data, data.frame(
+      exp_id = exp_name,
+      activation = activation,
+      accuracy = ci$estimate,
+      ci_lower = ci$lower,
+      ci_upper = ci$upper,
+      stringsAsFactors = FALSE
+    ))
+  }
+  
+  if (nrow(plot_data) == 0) {
+    warning("No valid experiments found for top N plot")
+    return(invisible(NULL))
+  }
+  
+  # Sort by accuracy and select top N
+  plot_data <- plot_data[order(-plot_data$accuracy), ]
+  n_to_show <- min(n, nrow(plot_data))
+  plot_data <- plot_data[1:n_to_show, ]
+  
+  # Create label with activation info
+  plot_data$label <- paste0(plot_data$exp_id, " (", plot_data$activation, ")")
+  plot_data$label <- factor(plot_data$label, levels = rev(plot_data$label))
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
+  
+  # Create horizontal bar chart
+  p <- ggplot(plot_data, aes(x = accuracy, y = label)) +
+    geom_col(fill = theme_colors$primary, alpha = 0.8) +
+    geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.2, color = "gray30") +
+    geom_text(aes(label = sprintf("%.3f", accuracy)), hjust = -0.2, size = 3) +
+    scale_x_continuous(limits = c(0, 1.1), breaks = seq(0, 1, by = 0.2)) +
+    labs(
+      title = paste("Top", n_to_show, "Models by Test Accuracy"),
+      x = "Test Accuracy",
+      y = NULL
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+      axis.text.y = element_text(size = 10),
+      axis.text.x = element_text(size = 10),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor = element_blank(),
+      plot.margin = margin(10, 50, 10, 10)
+    )
+  
+  # Save plot
+  ggsave(
+    file.path(output_dir, "top5_models.pdf"),
+    plot = p,
+    width = 10,
+    height = 6,
+    dpi = 300
+  )
+  
+  invisible(NULL)
+}
+
+#' Find best model across all experiments by test accuracy
+#' @param experiments List of all experiment objects (flattened)
+#' @return List with name, exp object, and accuracy of best model
+find_best_model <- function(experiments) {
+  if (is.null(experiments) || length(experiments) == 0) {
+    return(list(name = NULL, exp = NULL, accuracy = NULL))
+  }
+  
+  best_accuracy <- -Inf
+  best_exp <- NULL
+  best_name <- NULL
+  
+  for (exp_name in names(experiments)) {
+    exp <- experiments[[exp_name]]
+    if (is.null(exp) || is.null(exp$summary)) next
+    
+    metrics <- exp$summary$metrics
+    if (is.null(metrics$test$accuracy)) next
+    
+    acc <- metrics$test$accuracy
+    if (acc > best_accuracy) {
+      best_accuracy <- acc
+      best_exp <- exp
+      best_name <- exp_name
+    }
+  }
+  
+  list(name = best_name, exp = best_exp, accuracy = best_accuracy)
+}
+
+#' Plot training and validation curves for best model
+#' @param exp Best experiment object
+#' @param output_dir Output directory
+#' @param theme_name Theme name for styling
+#' @return Invisible NULL
+plot_best_model_curves <- function(exp, output_dir, theme_name = "poster") {
+  if (is.null(exp) || is.null(exp$history_train) || is.null(exp$history_valid)) {
+    warning("No training history available for best model")
+    return(invisible(NULL))
+  }
+  
+  # Get theme colors
+  theme_colors <- get_theme_colors(theme_name)
+  train_color <- theme_colors$primary
+  valid_color <- theme_colors$secondary
+  best_epoch_color <- theme_colors$accent
+  
+  # Extract history data
+  train_data <- exp$history_train
+  valid_data <- exp$history_valid
+  
+  # Find best validation epoch
+  best_epoch <- exp$summary$metrics$valid$epoch
+  if (is.null(best_epoch)) {
+    best_epoch <- valid_data$epoch[which.max(valid_data$accuracy)]
+  }
+  
+  # Get model info
+  exp_id <- exp$exp_id
+  test_acc <- exp$summary$metrics$test$accuracy
+  activation <- if (!is.null(exp$summary$hyperparameters$activation)) {
+    as.character(exp$summary$hyperparameters$activation)
+  } else if (!is.null(exp$config$activation)) {
+    as.character(exp$config$activation)
+  } else {
+    "unknown"
+  }
+  
+  # Create accuracy plot
+  p1 <- ggplot() +
+    geom_line(data = train_data, aes(x = epoch, y = accuracy, color = "Training"), 
+              linewidth = 1) +
+    geom_line(data = valid_data, aes(x = epoch, y = accuracy, color = "Validation"), 
+              linewidth = 1, linetype = "dashed") +
+    geom_vline(xintercept = best_epoch, color = best_epoch_color, 
+               linetype = "dotted", linewidth = 0.8) +
+    annotate("text", x = best_epoch, y = 0.95, 
+             label = paste("Best epoch:", best_epoch), 
+             hjust = -0.1, color = best_epoch_color, size = 3) +
+    scale_color_manual(values = c("Training" = train_color, "Validation" = valid_color)) +
+    scale_y_continuous(limits = c(0, 1)) +
+    labs(
+      title = "Accuracy",
+      x = NULL,
+      y = "Accuracy",
+      color = NULL
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(face = "bold", size = 12),
+      legend.position = "top",
+      panel.grid.minor = element_blank()
+    )
+  
+  # Create loss plot
+  p2 <- ggplot() +
+    geom_line(data = train_data, aes(x = epoch, y = loss, color = "Training"), 
+              linewidth = 1) +
+    geom_line(data = valid_data, aes(x = epoch, y = loss, color = "Validation"), 
+              linewidth = 1, linetype = "dashed") +
+    geom_vline(xintercept = best_epoch, color = best_epoch_color, 
+               linetype = "dotted", linewidth = 0.8) +
+    scale_color_manual(values = c("Training" = train_color, "Validation" = valid_color)) +
+    labs(
+      title = "Loss",
+      x = "Epoch",
+      y = "Loss",
+      color = NULL
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(face = "bold", size = 12),
+      legend.position = "none",
+      panel.grid.minor = element_blank()
+    )
+  
+  # Combine plots using cowplot
+  combined_plot <- cowplot::plot_grid(
+    p1, p2,
+    nrow = 2,
+    align = "v",
+    rel_heights = c(1, 1)
+  )
+  
+  # Add title
+  title <- cowplot::ggdraw() +
+    cowplot::draw_label(
+      paste0("Best Model Training History: ", exp_id, 
+             "\nTest Accuracy: ", round(test_acc, 4), 
+             ", Activation: ", activation),
+      fontface = "bold",
+      size = 14
+    )
+  
+  final_plot <- cowplot::plot_grid(
+    title, combined_plot,
+    ncol = 1,
+    rel_heights = c(0.15, 1)
+  )
+  
+  # Save plot
+  ggsave(
+    file.path(output_dir, "best_model_curves.pdf"),
+    plot = final_plot,
+    width = 10,
+    height = 10,
     dpi = 300
   )
   

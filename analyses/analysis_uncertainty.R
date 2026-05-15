@@ -4,8 +4,9 @@
 #' Run uncertainty analysis for a single experiment
 #' @param exp_path Path to experiment directory
 #' @param output_dir Output directory for plots
+#' @param theme_name Theme name for styling
 #' @return Invisible NULL
-run_uncertainty_analysis <- function(exp_path, output_dir) {
+run_uncertainty_analysis <- function(exp_path, output_dir, theme_name = "poster") {
   if (!dir.exists(exp_path)) {
     warning("Experiment path does not exist: ", exp_path)
     return(invisible(NULL))
@@ -39,11 +40,11 @@ run_uncertainty_analysis <- function(exp_path, output_dir) {
   test_results <- read.csv(file.path(exp_path, "test_results.csv"), stringsAsFactors = FALSE)
   
   # Plot confidence histogram
-  p1 <- plot_confidence_histogram(test_results, "Confidence Distribution")
+  p1 <- plot_confidence_histogram(test_results, "Confidence Distribution", theme_name)
   ggsave(file.path(output_dir, "confidence_histogram.pdf"), p1, width = 8, height = 4)
   
   # Plot accuracy by confidence
-  p2 <- plot_confidence_accuracy(results$by_confidence, "Accuracy by Confidence Level")
+  p2 <- plot_confidence_accuracy(results$by_confidence, "Accuracy by Confidence Level", theme_name)
   ggsave(file.path(output_dir, "confidence_accuracy.pdf"), p2, width = 6, height = 4)
   
   message("\nUncertainty plots saved to output/\n")

@@ -15,7 +15,8 @@ run_ci_analysis <- function(experiments, exps_list, output_dir, theme_name) {
   # Generate binomial plot with CIs
   set_plot_theme(theme_name)
   plot_binomial_with_ci(named_exps,
-                        file = file.path(output_dir, "binomial_with_ci.pdf"))
+                        file = file.path(output_dir, "binomial_with_ci.pdf"),
+                        theme_name = theme_name)
   
   # Print symmetric Beta CI table
   cat(sprintf("  %-12s %-12s %12s %15s\n", "exp", "activation", "estimate", "95% CI"))
