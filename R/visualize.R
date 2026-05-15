@@ -1,8 +1,4 @@
-# MA223 Exam R Package
-# Visualization Functions
 
-#' Plot theme settings
-#' @param theme One of "report" (clean, black/white) or "poster" (vivid colors)
 set_plot_theme <- function(theme = "report") {
   if (theme == "poster") {
     par(bg = "white", col.main = "black", col.lab = "black", col.axis = "black")
@@ -15,7 +11,7 @@ set_plot_theme <- function(theme = "report") {
   invisible(NULL)
 }
 
-# Colors for different themes
+
 get_theme_colors <- function(theme = "report") {
   if (theme == "poster") {
     list(
@@ -24,9 +20,9 @@ get_theme_colors <- function(theme = "report") {
       accent = "#1D3557",
       background = "#F1FAEE",
       palette = c("#E63946", "#457B9D", "#1D3557", "#A8DADC", "#F4A261", "#2A9D8F"),
-      # Semantic colors for specific use cases
-      success = "#2ecc71",      # For "correct", "good" indicators
-      error = "#e74c3c",        # For "wrong", "error" indicators
+      # Semantic colors
+      success = "#2ecc71",      # For "correct"
+      error = "#e74c3c",        # For "wrong"
       gradient_low = "white",
       gradient_high = "#1D3557",
       confusion_matrix = function(n = 100) colorRampPalette(c("white", "#1D3557"))(n),
@@ -36,18 +32,18 @@ get_theme_colors <- function(theme = "report") {
     )
   } else {
     list(
-      primary = "steelblue",
-      secondary = "darkgray",
-      accent = "black",
+      primary = "#800000",      
+      secondary = "#A52A2A",    
+      accent = "#4A0000",       
       background = "white",
-      palette = c("steelblue", "darkgray", "black", "darkgray", "gray40", "gray60"),
+      palette = c("#800000", "#A52A2A", "#4A0000", "#CD5C5C", "#B22222", "#8B0000"),
       # Semantic colors for specific use cases
-      success = "forestgreen",
-      error = "firebrick",
+      success = "#228B22",      
+      error = "#8B0000",        
       gradient_low = "white",
-      gradient_high = "steelblue",
-      confusion_matrix = function(n = 100) colorRampPalette(c("white", "steelblue"))(n),
-      binomial_surface = function(n = 100) colorRampPalette(c("white", "lightgray", "gray", "darkgray"))(n),
+      gradient_high = "#800000", 
+      confusion_matrix = function(n = 100) colorRampPalette(c("white", "#800000"))(n),
+      binomial_surface = function(n = 100) colorRampPalette(c("white", "#FFF0F0", "#CD5C5C", "#800000"))(n),
       grid = "gray90",
       reference_line = "gray70"
     )
@@ -359,13 +355,13 @@ plot_validation_curves <- function(exps, file = NULL, width = 8, height = 5, the
   })
 
   if (any(has_history)) {
-    # Use theme palette instead of rainbow
+   
     n_exps <- length(exps)
     palette <- theme_colors$palette
     cols <- if (n_exps <= length(palette)) {
       palette[1:n_exps]
     } else {
-      # If more experiments than palette colors, recycle with interpolation
+      
       colorRampPalette(palette)(n_exps)
     }
 
@@ -497,7 +493,7 @@ plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5, them
   # Get theme colors
   theme_colors <- get_theme_colors(theme_name)
   
-  # Derive activation names (fallback to existing names)
+
   act_names <- sapply(exps, function(e) {
     act <- NULL
     if (!is.null(e$summary$hyperparameters$activation)) act <- e$summary$hyperparameters$activation
@@ -527,13 +523,32 @@ plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5, them
        xlab = "Number of successes (k)", ylab = "Probability",
        main = paste("Binomial Distributions with Symmetric Credible Intervals\n", total_tests))
   
-  # Use theme palette instead of rainbow
+
   n_exps <- length(exps)
-  palette <- theme_colors$palette
-  cols <- if (n_exps <= length(palette)) {
-    palette[1:n_exps]
+  theme_colors <- get_theme_colors(theme_name)
+  base_palette <- theme_colors$palette
+  
+
+  if (theme_name == "report") {
+    extended_palette <- c(
+      "#800000",  
+      "#D2691E",
+      "#556B2F", 
+      "#483D8B", 
+      "#8B4513", 
+      "#2F4F4F",  
+      "#CD853F",  
+      "#4B0082"   
+    )
   } else {
-    colorRampPalette(palette)(n_exps)
+
+    extended_palette <- base_palette
+  }
+  
+  cols <- if (n_exps <= length(extended_palette)) {
+    extended_palette[1:n_exps]
+  } else {
+    colorRampPalette(extended_palette)(n_exps)
   }
   
   for (i in seq_along(exps)) {
@@ -559,7 +574,7 @@ plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5, them
     abline(v = ci$upper * n, col = cols[i], lty = 3)
   }
   
-  # Legend shows activation function names (names(exps) were set above)
+
   legend("topright", legend = names(exps), col = cols, lty = 1, lwd = 2, cex = 0.8, bg = "white")
   
   if (!is.null(file)) {
@@ -574,7 +589,7 @@ plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5, them
 #' @param theme_name Theme name (for consistent styling)
 #' @return Invisible NULL
 plot_activation_functions <- function(output_dir, theme_name = "poster") {
-  # Define activation functions
+
   relu <- function(x) pmax(0, x)
   sigmoid <- function(x) 1 / (1 + exp(-x))
   gelu <- function(x) x * pnorm(x)
@@ -591,17 +606,17 @@ plot_activation_functions <- function(output_dir, theme_name = "poster") {
   data_gelu <- data.frame(x = x, y = gelu(x), function_name = "GELU")
   data_silu <- data.frame(x = x, y = silu(x), function_name = "SiLU")
   
-  # Color palette - rainbow colors
+ 
   colors <- c(
-    "Linear" = "#E41A1C",   # Red
-    "ReLU" = "#377EB8",     # Blue
-    "Sigmoid" = "#4DAF4A",  # Green
-    "Tanh" = "#984EA3",     # Purple
-    "GELU" = "#FF7F00",     # Orange
-    "SiLU" = "#F781BF"      # Pink
+    "Linear" = "#E41A1C",
+    "ReLU" = "#377EB8",   
+    "Sigmoid" = "#4DAF4A", 
+    "Tanh" = "#984EA3",    
+    "GELU" = "#FF7F00",   
+    "SiLU" = "#F781BF"     
   )
   
-  # Function to create individual plot
+
   create_activation_plot <- function(data, y_limits = NULL) {
     p <- ggplot(data, aes(x = x, y = y, color = function_name)) +
       geom_line(linewidth = 1.2) +
@@ -637,8 +652,8 @@ plot_activation_functions <- function(output_dir, theme_name = "poster") {
   p5 <- create_activation_plot(data_gelu)
   p6 <- create_activation_plot(data_silu)
   
-  # Create 2x3 grid using patchwork (part of tidyverse) or cowplot
-  # Using cowplot for grid arrangement
+
+
   if (requireNamespace("cowplot", quietly = TRUE)) {
     combined_plot <- cowplot::plot_grid(
       p1, p2, p3, p4, p5, p6,
@@ -646,8 +661,7 @@ plot_activation_functions <- function(output_dir, theme_name = "poster") {
       labels = NULL
     )
   } else {
-    # Fallback: save individual plots or use gridExtra if available
-    # For now, just use ggsave on the first plot as a fallback
+ 
     combined_plot <- p1
   }
   
@@ -729,14 +743,14 @@ plot_top_n_models <- function(experiments, n = 5, output_dir, theme_name = "post
   n_to_show <- min(n, nrow(plot_data))
   plot_data <- plot_data[1:n_to_show, ]
   
-  # Create label with activation info
+
   plot_data$label <- paste0(plot_data$exp_id, " (", plot_data$activation, ")")
   plot_data$label <- factor(plot_data$label, levels = rev(plot_data$label))
   
-  # Get theme colors
+
   theme_colors <- get_theme_colors(theme_name)
   
-  # Create horizontal bar chart
+ 
   p <- ggplot(plot_data, aes(x = accuracy, y = label)) +
     geom_col(fill = theme_colors$primary, alpha = 0.8) +
     geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.2, color = "gray30") +
@@ -799,14 +813,14 @@ find_best_model <- function(experiments) {
   list(name = best_name, exp = best_exp, accuracy = best_accuracy)
 }
 
-#' Plot training and validation curves for best model
-#' @param exp Best experiment object
+#' Plot training and validation curves for illustration
+#' @param exp Experiment object
 #' @param output_dir Output directory
 #' @param theme_name Theme name for styling
 #' @return Invisible NULL
-plot_best_model_curves <- function(exp, output_dir, theme_name = "poster") {
+plot_training_curves_illustration <- function(exp, output_dir, theme_name = "poster") {
   if (is.null(exp) || is.null(exp$history_train) || is.null(exp$history_valid)) {
-    warning("No training history available for best model")
+    warning("No training history available")
     return(invisible(NULL))
   }
   
@@ -816,7 +830,7 @@ plot_best_model_curves <- function(exp, output_dir, theme_name = "poster") {
   valid_color <- theme_colors$secondary
   best_epoch_color <- theme_colors$accent
   
-  # Extract history data
+  
   train_data <- exp$history_train
   valid_data <- exp$history_valid
   
@@ -885,7 +899,7 @@ plot_best_model_curves <- function(exp, output_dir, theme_name = "poster") {
       panel.grid.minor = element_blank()
     )
   
-  # Combine plots using cowplot
+
   combined_plot <- cowplot::plot_grid(
     p1, p2,
     nrow = 2,
@@ -896,7 +910,7 @@ plot_best_model_curves <- function(exp, output_dir, theme_name = "poster") {
   # Add title
   title <- cowplot::ggdraw() +
     cowplot::draw_label(
-      paste0("Best Model Training History: ", exp_id, 
+      paste0("Training Curves Illustration: ", exp_id, 
              "\nTest Accuracy: ", round(test_acc, 4), 
              ", Activation: ", activation),
       fontface = "bold",
@@ -911,7 +925,7 @@ plot_best_model_curves <- function(exp, output_dir, theme_name = "poster") {
   
   # Save plot
   ggsave(
-    file.path(output_dir, "best_model_curves.pdf"),
+    file.path(output_dir, "training_curves_illustration.pdf"),
     plot = final_plot,
     width = 10,
     height = 10,

@@ -1,23 +1,3 @@
-# MA223 Exam R Package
-# Data Loading Functions
-
-#' Get experiments from a specific group
-#' @param group_name Group name (e.g., "InterpolateLearningRate", "Linear3", "ActivationComparison")
-#' @param base_path Base path to experiments (default from get_repo_root)
-#' @return Named list of experiment objects from that group
-get_experiments_by_group <- function(group_name, base_path = get_repo_root()) {
-  group_path <- file.path(base_path, "results/experiments", group_name)
-
-  if (!dir.exists(group_path)) {
-    stop("Experiment group not found: ", group_path)
-  }
-
-  exp_dirs <- list.dirs(group_path, full.names = FALSE, recursive = FALSE)
-  exp_ids <- exp_dirs[grepl("^exp_", exp_dirs)]
-
-  load_experiments(exp_ids, base_path)
-}
-
 #' List available experiment groups
 #' @param base_path Base path to experiments
 #' @return Character vector of group names
@@ -26,12 +6,19 @@ list_experiment_groups <- function(base_path = get_repo_root()) {
   list.dirs(exp_base, full.names = FALSE, recursive = FALSE)
 }
 
-#' Filter experiments by activation function
-#' @param exps Named list of experiment objects
-#' @param activation Activation name (e.g., "sigmoid", "silu", "relu", "gelu", "tanh")
-#' @return Filtered list of experiments
-filter_by_activation <- function(exps, activation) {
-  exps[sapply(exps, function(e) e$config$activation == activation)]
+#' List available experiments in a group
+#' @param base_path Base path to experiments
+#' @param group Group name
+#' @return Character vector of experiment IDs
+list_experiments <- function(base_path = get_repo_root(), group = "ActivationComparison") {
+  exp_path <- file.path(base_path, "results/experiments", group)
+
+  if (!dir.exists(exp_path)) {
+    stop("Experiments directory not found: ", exp_path)
+  }
+
+  dirs <- list.dirs(exp_path, full.names = FALSE, recursive = FALSE)
+  dirs[grepl("^exp_", dirs)]
 }
 
 #' Load single experiment results
@@ -92,31 +79,6 @@ load_experiments <- function(exp_ids, base_path = get_repo_root(), group = "Acti
 load_all_experiments <- function(base_path = get_repo_root(), group = "ActivationComparison") {
   exp_ids <- list_experiments(base_path, group)
   load_experiments(exp_ids, base_path, group)
-}
-
-#' Get experiment IDs that have complete data
-#' @param base_path Base path to experiments
-#' @param group Group name
-#' @return Character vector of valid experiment IDs
-valid_experiments <- function(base_path = get_repo_root(), group = "ActivationComparison") {
-  exp_ids <- list_experiments(base_path, group)
-
-  sapply(exp_ids, function(exp_id) {
-    exp_path <- file.path(base_path, "results/experiments", group, exp_id)
-    all(sapply(c("config.json", "summary.json", "history_train.csv", "history_valid.csv",
-                "test_results.csv", "confusion_matrix.csv"),
-              function(f) file.exists(file.path(exp_path, f))))
-  }) |> which() |> names()
-}
-
-#' Extract test results with per-sample predictions
-#' @param test_results Test results data frame
-#' @return Data frame with sample_id, true_label, predicted_label, correct, confidence
-get_predictions <- function(test_results) {
-  if (is.null(test_results)) {
-    return(NULL)
-  }
-  test_results
 }
 
 #' Get confusion matrix as matrix object

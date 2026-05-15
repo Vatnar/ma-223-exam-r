@@ -1,6 +1,3 @@
-# MA223 Exam R Package
-# Visualization Suite Module
-
 #' Run full visualization suite
 #' @param experiments List of all experiment groups
 #' @param output_dir Output directory for plots
@@ -9,7 +6,7 @@
 run_visualization_suite <- function(experiments, output_dir, theme_name) {
   set_plot_theme(theme_name)
   
-  # --- Confusion Matrix for specific experiment ---
+  # Confusion matrix
   ExpGroup <- "ActivationComparison"
   ExpId <- "exp_027"
   
@@ -25,15 +22,14 @@ run_visualization_suite <- function(experiments, output_dir, theme_name) {
     )
   }
   
-  # --- Reliability Diagram ---
+  # Reliability diagram
   if (!is.null(experiments[[ExpGroup]]) && !is.null(experiments[[ExpGroup]][[ExpId]])) {
     exp <- experiments[[ExpGroup]][[ExpId]]
     path <- file.path(output_dir, sprintf("%s-%s-reliability.pdf", ExpGroup, ExpId))
     plot_reliability_diagram(exp$test_results, file = path, theme_name = theme_name)
   }
   
-  # --- Hyperparameter vs Metric Plot ---
-  # Flatten all experiments into a single list
+  # Learning rate vs test accuracy
   all_exps <- unlist(experiments, recursive = FALSE)
   
   plot_hyperparam_vs_metric(
@@ -45,18 +41,17 @@ run_visualization_suite <- function(experiments, output_dir, theme_name) {
     theme_name = theme_name
   )
   
-  # --- Activation Functions Reference ---
+  # Activation function chart
   plot_activation_functions(output_dir, theme_name)
   
-  # --- Top 5 Models ---
+  # draw top 5 model accuracy
   plot_top_n_models(all_exps, n = 5, output_dir, theme_name)
   
-  # --- Best Model Training Curves ---
-  best_result <- find_best_model(all_exps)
-  if (!is.null(best_result$exp)) {
-    plot_best_model_curves(best_result$exp, output_dir, theme_name)
-    message("  Best model: ", best_result$name, 
-            " (test acc: ", round(best_result$accuracy, 4), ")")
+  # Training progress
+  illustration_model <- experiments[["ActivationComparison"]][["exp_033"]]
+  if (!is.null(illustration_model)) {
+    plot_training_curves_illustration(illustration_model, output_dir, theme_name)
+    message("  Training curves illustration: exp_033")
   }
   
   message("  Visualizations saved to output/\n")

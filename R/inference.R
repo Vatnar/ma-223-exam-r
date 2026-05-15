@@ -1,5 +1,3 @@
-# MA223 Exam R Package
-# Inference Functions
 
 #' Symmetric Credibility Interval (Beta Posterior)
 #' @param x Number of successes
@@ -67,59 +65,102 @@ compare_proportions <- function(n1, n2, N) {
   )
 }
 
-#' Test for difference in proportions (chi-square approximation)
-#' @param n1 Number correct in group 1
-#' @param n2 Number correct in group 2
-#' @param N Total samples per group
-#' @return List with chi2, p-value
-prop_test <- function(n1, n2, N) {
-  p1 <- n1 / N
-  p2 <- n2 / N
-  p_pooled <- (n1 + n2) / (2 * N)
+#' Wilson Score Interval for binomial proportion
+#' @param n_success Number of successes
+#' @param n_total Total number of trials
+#' @param conf Confidence level (default 0.95)
+#' @return List with estimate, lower, and upper bounds
+wilson_ci <- function(n_success, n_total, conf = 0.95) {
+  if (n_total == 0) {
+    return(list(estimate = NA, lower = NA, upper = NA))
+  }
   
-  expected1 <- p_pooled * N
-  expected2 <- p_pooled * N
+  p_hat <- n_success / n_total
+  alpha <- 1 - conf
+  z <- qnorm(1 - alpha / 2)
   
-  chi2 <- ((n1 - expected1)^2 / expected1) + ((n2 - expected2)^2 / expected2)
-  
-  p_value <- 1 - pchisq(chi2, df = 1)
+  denominator <- 1 + z^2 / n_total
+  centre <- (p_hat + z^2 / (2 * n_total)) / denominator
+  half_width <- z * sqrt((p_hat * (1 - p_hat) + z^2 / (4 * n_total)) / n_total) / denominator
   
   list(
-    p1 = p1,
-    p2 = p2,
-    chi2 = chi2,
-    p_value = p_value
+    estimate = p_hat,
+    lower = max(0, centre - half_width),
+    upper = min(1, centre + half_width)
   )
 }
 
-#' Calculate odds ratio with CI
-#' @param a Correct in both
-#' @param b Correct in model 1 only
-#' @param c Correct in model 2 only
-#' @param d Wrong in both
-#' @return List with OR, CI
-odds_ratio_ci <- function(a, b, c, d) {
-  if (any(c(a, b, c, d) == 0)) {
-    a <- a + 0.5
-    b <- b + 0.5
-    c <- c + 0.5
-    d <- d + 0.5
+#' Compute Expected Calibration Error (ECE)
+#' @param test_results Data frame with confidence and correct columns
+#' @param n_bins Number of bins for calibration
+#' @return ECE value
+calibration_error <- function(test_results, n_bins = 10) {
+  if (is.null(test_results) || !"confidence" %in% names(test_results)) {
+    return(NULL)
   }
   
-  OR <- (a * d) / (b * c)
+  bin_edges <- seq(0, 1, length.out = n_bins + 1)
+  ece <- 0
+  total_samples <- nrow(test_results)
   
-  log_OR <- log(OR)
-  se_log_OR <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
+  for (i in 1:n_bins) {
+    if (i == n_bins) {
+      mask <- test_results$confidence >= bin_edges[i] & test_results$confidence <= bin_edges[i + 1]
+    } else {
+      mask <- test_results$confidence >= bin_edges[i] & test_results$confidence < bin_edges[i + 1]
+    }
+    
+    n_samples <- sum(mask)
+    if (n_samples == 0) next
+    
+    avg_confidence <- mean(test_results$confidence[mask])
+    actual_accuracy <- mean(test_results$correct[mask])
+    
+    ece <- ece + (n_samples / total_samples) * abs(avg_confidence - actual_accuracy)
+  }
   
-  z <- qnorm(0.975)
+  ece
+}
+
+#' Prepare data for reliability diagram
+#' @param test_results Data frame with confidence and correct columns
+#' @param n_bins Number of bins
+#' @return Data frame with bin_center and actual_accuracy
+reliability_diagram_data <- function(test_results, n_bins = 10) {
+  if (is.null(test_results) || !"confidence" %in% names(test_results)) {
+    return(NULL)
+  }
   
-  ci_lower <- exp(log_OR - z * se_log_OR)
-  ci_upper <- exp(log_OR + z * se_log_OR)
+  bin_edges <- seq(0, 1, length.out = n_bins + 1)
   
-  list(
-    OR = OR,
-    log_OR = log_OR,
-    ci_lower = ci_lower,
-    ci_upper = ci_upper
-  )
+  results <- lapply(1:n_bins, function(i) {
+    if (i == n_bins) {
+      mask <- test_results$confidence >= bin_edges[i] & test_results$confidence <= bin_edges[i + 1]
+    } else {
+      mask <- test_results$confidence >= bin_edges[i] & test_results$confidence < bin_edges[i + 1]
+    }
+    
+    n_samples <- sum(mask)
+    if (n_samples == 0) {
+      return(NULL)
+    }
+    
+    avg_confidence <- mean(test_results$confidence[mask])
+    actual_accuracy <- mean(test_results$correct[mask])
+    
+    data.frame(
+      bin_center = (bin_edges[i] + bin_edges[i + 1]) / 2,
+      actual_accuracy = actual_accuracy,
+      avg_confidence = avg_confidence,
+      n_samples = n_samples,
+      stringsAsFactors = FALSE
+    )
+  })
+  
+  results <- Filter(function(x) !is.null(x), results)
+  if (length(results) == 0) {
+    return(NULL)
+  }
+  
+  do.call(rbind, results)
 }

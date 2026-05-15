@@ -106,13 +106,16 @@ calibration_analysis <- function(test_results) {
 }
 
 analyze_experiment_uncertainty <- function(exp_path) {
+  
   test_file <- file.path(exp_path, "test_results.csv")
 
   if (!file.exists(test_file)) {
     warning(paste("No test_results.csv found in", exp_path))
     return(NULL)
   }
-
+  
+  # rust burn ML module already assigns confidence to it tests
+  # so we can just extract from the data
   test_results <- read_csv(test_file, show_col_types = FALSE)
 
   results <- list(
@@ -123,8 +126,8 @@ analyze_experiment_uncertainty <- function(exp_path) {
       median_confidence = median(test_results$confidence)
     ),
     by_confidence = analyze_confidence(test_results),
-    correlation = correlation_test(test_results),
-    calibration = calibration_analysis(test_results)
+    correlation = correlation_test(test_results), # pearson correlation test
+    calibration = calibration_analysis(test_results) # adjust for average accuracy
   )
 
   return(results)

@@ -1,6 +1,4 @@
 # MA223 Exam R Package
-# Uncertainty Analysis Module
-
 #' Run uncertainty analysis for a single experiment
 #' @param exp_path Path to experiment directory
 #' @param output_dir Output directory for plots
@@ -12,7 +10,6 @@ run_uncertainty_analysis <- function(exp_path, output_dir, theme_name = "poster"
     return(invisible(NULL))
   }
   
-  # Run uncertainty analysis
   results <- analyze_experiment_uncertainty(exp_path)
   
   if (is.null(results)) {
@@ -36,10 +33,9 @@ run_uncertainty_analysis <- function(exp_path, output_dir, theme_name = "poster"
   cat("\nCalibration:\n")
   print(results$calibration)
   
-  # Read test results for plotting
   test_results <- read.csv(file.path(exp_path, "test_results.csv"), stringsAsFactors = FALSE)
   
-  # Plot confidence histogram
+  # confidence histogram
   p1 <- plot_confidence_histogram(test_results, "Confidence Distribution", theme_name)
   ggsave(file.path(output_dir, "confidence_histogram.pdf"), p1, width = 8, height = 4)
   

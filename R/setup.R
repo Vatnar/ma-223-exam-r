@@ -47,7 +47,6 @@ initialize_workspace <- function(theme = "poster") {
   source("R/summarize.R")
   source("R/inference.R")
   source("R/tests.R")
-  source("R/compare.R")
   source("R/visualize.R")
   source("R/uncertainty.R")
   
