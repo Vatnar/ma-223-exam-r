@@ -126,7 +126,10 @@ plot_confusion_matrix <- function(cm, file = NULL, max_classes = 50,
 
   cols <- colorRampPalette(c("white", "navy"))(100)
 
-  image(1:nrow(cm_mat), 1:ncol(cm_mat), log10(cm_mat + 1),
+  n_rows <- nrow(cm_mat)
+  n_cols <- ncol(cm_mat)
+
+  image(1:n_rows, 1:n_cols, log10(cm_mat + 1),
         col = cols, xlab = "Predicted", ylab = "True",
         main = "Confusion Matrix (log10 scale)")
 
@@ -496,6 +499,100 @@ plot_binomial_with_ci <- function(exps, file = NULL, width = 8, height = 5) {
   if (!is.null(file)) {
     dev.off()
   }
+  
+  invisible(NULL)
+}
+
+#' Plot activation functions reference chart
+#' @param output_dir Output directory
+#' @param theme_name Theme name (for consistent styling)
+#' @return Invisible NULL
+plot_activation_functions <- function(output_dir, theme_name = "poster") {
+  # Define activation functions
+  relu <- function(x) pmax(0, x)
+  sigmoid <- function(x) 1 / (1 + exp(-x))
+  gelu <- function(x) x * pnorm(x)
+  silu <- function(x) x * sigmoid(x)
+  
+  # Generate x values
+  x <- seq(-5, 5, length.out = 500)
+  
+  # Create data frames for each function
+  data_linear <- data.frame(x = x, y = x, function_name = "Linear")
+  data_relu <- data.frame(x = x, y = relu(x), function_name = "ReLU")
+  data_sigmoid <- data.frame(x = x, y = sigmoid(x), function_name = "Sigmoid")
+  data_tanh <- data.frame(x = x, y = tanh(x), function_name = "Tanh")
+  data_gelu <- data.frame(x = x, y = gelu(x), function_name = "GELU")
+  data_silu <- data.frame(x = x, y = silu(x), function_name = "SiLU")
+  
+  # Color palette - rainbow colors
+  colors <- c(
+    "Linear" = "#E41A1C",   # Red
+    "ReLU" = "#377EB8",     # Blue
+    "Sigmoid" = "#4DAF4A",  # Green
+    "Tanh" = "#984EA3",     # Purple
+    "GELU" = "#FF7F00",     # Orange
+    "SiLU" = "#F781BF"      # Pink
+  )
+  
+  # Function to create individual plot
+  create_activation_plot <- function(data, y_limits = NULL) {
+    p <- ggplot(data, aes(x = x, y = y, color = function_name)) +
+      geom_line(linewidth = 1.2) +
+      geom_hline(yintercept = 0, linetype = "dashed", color = "gray50", alpha = 0.5) +
+      geom_vline(xintercept = 0, linetype = "dashed", color = "gray50", alpha = 0.5) +
+      scale_color_manual(values = colors) +
+      labs(title = data$function_name[1],
+           x = "x",
+           y = "f(x)") +
+      theme_minimal(base_size = 12) +
+      theme(
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        legend.position = "none",
+        panel.grid.major = element_line(color = "gray90"),
+        panel.grid.minor = element_line(color = "gray95"),
+        panel.border = element_rect(color = "gray70", fill = NA, linewidth = 0.5),
+        axis.title = element_text(size = 11),
+        axis.text = element_text(size = 9)
+      )
+    
+    if (!is.null(y_limits)) {
+      p <- p + coord_cartesian(ylim = y_limits)
+    }
+    
+    return(p)
+  }
+  
+  # Create individual plots
+  p1 <- create_activation_plot(data_linear)
+  p2 <- create_activation_plot(data_relu)
+  p3 <- create_activation_plot(data_sigmoid, y_limits = c(-0.2, 1.2))
+  p4 <- create_activation_plot(data_tanh, y_limits = c(-1.2, 1.2))
+  p5 <- create_activation_plot(data_gelu)
+  p6 <- create_activation_plot(data_silu)
+  
+  # Create 2x3 grid using patchwork (part of tidyverse) or cowplot
+  # Using cowplot for grid arrangement
+  if (requireNamespace("cowplot", quietly = TRUE)) {
+    combined_plot <- cowplot::plot_grid(
+      p1, p2, p3, p4, p5, p6,
+      nrow = 2, ncol = 3,
+      labels = NULL
+    )
+  } else {
+    # Fallback: save individual plots or use gridExtra if available
+    # For now, just use ggsave on the first plot as a fallback
+    combined_plot <- p1
+  }
+  
+  # Save to output directory
+  ggsave(
+    file.path(output_dir, "activation_functions.pdf"),
+    plot = combined_plot,
+    width = 12,
+    height = 8,
+    dpi = 300
+  )
   
   invisible(NULL)
 }

@@ -1,6 +1,3 @@
-library(tidyverse)
-library(ggplot2)
-
 analyze_confidence <- function(test_results, n_bins = 4) {
   test_results <- test_results %>%
     mutate(
