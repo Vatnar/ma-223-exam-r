@@ -255,6 +255,11 @@ table_mcnemar <- table(Model_A = ExpA, Model_B = ExpB)
 print(table_mcnemar)
 mcnemar_result <- mcnemar.test(table_mcnemar)
 print(mcnemar_result)
+c <- table_mcnemar[2]
+b <- table_mcnemar[3]
+print((b-c)^2/(b+c))
+
+View(Experiments)
 
 # 
 
